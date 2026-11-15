@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+@import "tailwindcss";
+
+
+
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+@source "../../storage/framework/views/*.php";
+@source "../**/*.blade.php";
+@source "../**/*.js";
+
+@theme {
+    --font-sans: 'Cairo', 'Tajawal', ui-sans-serif, system-ui, sans-serif;
+    --color-primary-500: #3b82f6;
+    --color-primary-600: #2563eb;
+    --color-accent-500: #f59e0b;
+}
