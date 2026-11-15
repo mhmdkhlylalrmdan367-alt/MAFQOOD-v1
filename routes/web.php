@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/items', [ItemController::class, 'index'])->name('items.index');
+Route::get('/items', [SearchController::class, 'index'])->name('items.index');
 Route::get('/items/{item}', [ItemController::class, 'show'])->whereNumber('item')->name('items.show');
 
 Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');

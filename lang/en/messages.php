@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'app_name' => 'MAFQOOD',
+    'app_name' => 'Luqya Al-Sham',
     'tagline' => 'Lost & Found Platform',
 
     'type' => [

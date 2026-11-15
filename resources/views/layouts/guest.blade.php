@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', __('messages.app_name')) - MAFQOOD</title>
+    <title>@hasSection('title')@yield('title') · @endif{{ __('messages.app_name') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -14,7 +14,7 @@
         <div class="text-center mb-6">
             <a href="{{ route('home') }}" class="text-white text-3xl font-bold inline-flex items-center gap-2">
                 <i class="fa-solid fa-magnifying-glass-location"></i>
-                MAFQOOD
+                {{ __('messages.app_name') }}
             </a>
             <p class="text-white/80 mt-2">{{ __('messages.tagline') }}</p>
         </div>
@@ -30,7 +30,7 @@
         </div>
 
         <div class="text-center mt-6 text-white/70 text-sm">
-            &copy; {{ date('Y') }} MAFQOOD
+            &copy; {{ date('Y') }} {{ __('messages.app_name') }}
         </div>
     </div>
 
