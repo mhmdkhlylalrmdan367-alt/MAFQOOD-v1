@@ -1,171 +1,81 @@
 @extends('layouts.app')
-
-@section('title', 'لوحة التحكم')
-
+@section('title', 'بلاغاتي')
 @section('content')
-
-<div class="bg-primary-600 text-white py-10">
-    <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
-        <div>
-            <h1 class="text-3xl font-bold">مرحبًا، {{ auth()->user()->name }}</h1>
-            <p class="text-white/80 mt-1">أهلاً بك في لوحة التحكم</p>
-        </div>
-        <a href="{{ route('items.create') }}" class="bg-white text-primary-700 hover:bg-gray-100 px-5 py-2.5 rounded-lg font-semibold transition">
-            <i class="fa-solid fa-plus ml-2"></i> نشر إعلان
-        </a>
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-8">
+    <header class="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div><p class="text-sm text-[#53675f]">مرحبًا {{ auth()->user()->name }}</p><h1 class="mt-1 text-3xl font-extrabold text-[#153e35] sm:text-4xl">كل بلاغاتك، بمكان واحد.</h1><p class="mt-2 text-sm text-[#53675f]">تابع الردود، حدّث التفاصيل، وعلّم الغرض لما يرجع لصاحبه.</p></div>
+        <a href="{{ route('items.create') }}" class="rounded-full bg-[#153e35] px-5 py-3 text-sm font-bold text-white">+ انشر بلاغ</a>
+    </header>
+    <div class="mb-7 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        @foreach([['كل بلاغاتي', $stats['total'], route('dashboard')], ['بلاغات نشطة', $stats['active'], route('dashboard', ['status' => 'active'])], ['تم استرجاعها', $stats['resolved'], route('dashboard', ['status' => 'resolved'])], ['رسائل غير مقروءة', $stats['unread_messages'], route('conversations.index', ['unread' => 1])]] as [$label, $count, $url])
+            <a href="{{ $url }}" class="rounded-2xl border border-[#d5dfd1] bg-[#fffefa] p-5 transition-colors hover:bg-[#eaf2e5]"><span class="block text-3xl font-extrabold text-[#18594b]">{{ $count }}</span><span class="mt-2 block text-xs font-bold text-[#53675f]">{{ $label }}</span></a>
+        @endforeach
+    </div>
+    <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
+        <section aria-labelledby="my-reports-title">
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <h2 id="my-reports-title" class="text-xl font-extrabold text-[#153e35]">بلاغاتي</h2>
+                <form method="GET" action="{{ route('dashboard') }}" class="flex gap-2">
+                    <select name="status" aria-label="حالة البلاغ" class="rounded-xl border border-[#cbd9cc] bg-white px-3 py-2 text-sm">
+                        @foreach(['' => 'كل الحالات', 'active' => 'نشط', 'resolved' => 'تم الاسترجاع', 'closed' => 'مغلق', 'hidden' => 'مخفي'] as $value => $label)<option value="{{ $value }}" @selected(request('status', '') === $value)>{{ $label }}</option>@endforeach
+                    </select>
+                    <button class="rounded-xl bg-[#e3eddd] px-3 text-sm font-bold text-[#18594b]">عرض</button>
+                </form>
+            </div>
+            <div class="grid gap-3">
+                @forelse($items as $item)
+                    <article class="rounded-2xl border border-[#d5dfd1] bg-[#fffefa] p-4 sm:p-5">
+                        <div class="flex items-start gap-4">
+                            <a href="{{ route('items.show', $item) }}" aria-label="{{ $item->title }}" class="grid size-20 shrink-0 place-items-center overflow-hidden rounded-xl bg-[#e8efe2] text-[#50836b]">
+                                @if($image = $item->images->first())<img src="{{ asset('storage/'.$image->path) }}" class="size-full object-cover" alt="" loading="lazy">@else<i class="fa-solid fa-box-open" aria-hidden="true"></i>@endif
+                            </a>
+                            <div class="min-w-0 flex-1">
+                                <div class="mb-2 flex flex-wrap gap-2 text-xs font-bold">
+                                    <span class="rounded-full bg-[#e7eee2] px-2 py-1 text-[#18594b]">{{ $item->type_label }}</span>
+                                    <span class="rounded-full border border-[#dedfd3] px-2 py-1 text-[#53675f]">{{ $item->status_label }}</span>
+                                </div>
+                                <h3 class="font-extrabold text-[#193d35]"><a href="{{ route('items.show', $item) }}">{{ $item->title }}</a></h3>
+                                <p class="mt-1 text-xs leading-6 text-[#53675f]">{{ $item->region?->name }} · نُشر {{ $item->created_at->diffForHumans() }}</p>
+                            </div>
+                        </div>
+                        @if($item->images->isEmpty())<p class="mt-3 rounded-lg bg-[#f7efd9] px-3 py-2 text-xs text-[#756035]">أضف صورة واضحة حتى يسهل التعرّف على الغرض.</p>@endif
+                        <div class="mt-4 flex flex-wrap items-center gap-3 border-t border-[#e6e9de] pt-3 text-sm font-bold text-[#18594b]">
+                            <a href="{{ route('items.edit', $item) }}" class="rounded-lg border border-[#cbd9cc] px-3 py-2">تعديل التفاصيل</a>
+                            @if($item->status === 'active')
+                                <form method="POST" action="{{ route('items.status', $item) }}">
+                                    @csrf @method('PATCH')
+                                    <input type="hidden" name="status" value="resolved">
+                                    <button class="rounded-lg bg-[#e3eddd] px-3 py-2">تم استرجاع الغرض</button>
+                                </form>
+                            @endif
+                            <a href="{{ route('items.show', $item) }}" class="underline">عرض البلاغ</a>
+                            <form method="POST" action="{{ route('items.destroy', $item) }}" onsubmit="return confirm('متأكد من حذف البلاغ؟')">
+                                @csrf @method('DELETE')
+                                <button class="px-2 py-2 text-xs text-[#a94736]">حذف</button>
+                            </form>
+                        </div>
+                    </article>
+                @empty
+                    <div class="rounded-2xl border border-dashed border-[#b5cbb9] bg-white p-8 text-center"><p class="font-bold text-[#193d35]">ما في بلاغات بهالقسم.</p><a href="{{ route('items.create') }}" class="mt-3 inline-block text-sm text-[#18594b] underline">انشر بلاغ جديد</a></div>
+                @endforelse
+            </div>
+            <div class="mt-5">{{ $items->links() }}</div>
+        </section>
+        <aside class="grid gap-4">
+            <section class="rounded-2xl border border-[#d5dfd1] bg-[#fffefa] p-5">
+                <div class="mb-4 flex items-center justify-between"><h2 class="font-extrabold text-[#193d35]">آخر المحادثات</h2><a href="{{ route('conversations.index') }}" class="text-xs text-[#18594b] underline">الكل</a></div>
+                @forelse($conversations as $conversation)
+                    <a href="{{ route('conversations.show', $conversation) }}" class="block border-t border-[#e6e9de] py-3"><strong class="text-sm text-[#193d35]">{{ $conversation->otherUser(auth()->id())->name }}</strong><p class="mt-1 truncate text-xs text-[#53675f]">{{ $conversation->latestMessage?->body ?? 'افتح المحادثة' }}</p></a>
+                @empty
+                    <p class="text-sm leading-7 text-[#53675f]">لما تتواصل مع صاحب بلاغ، بتظهر محادثتكم هون.</p>
+                @endforelse
+            </section>
+            <section class="rounded-2xl bg-[#153e35] p-5 text-white">
+                <h2 class="font-extrabold text-[#efd8a8]">خلّي بلاغك أوضح</h2>
+                <ul class="mt-3 space-y-3 text-sm leading-7 text-[#e1eee6]"><li>صورة واضحة للغرض وعلاماته المميّزة.</li><li>المنطقة وتاريخ الفقدان أو العثور.</li><li>حدّث حالة البلاغ بعد الاسترجاع.</li></ul>
+                <a href="{{ route('profile.edit') }}" class="mt-4 inline-block text-sm font-bold underline">إعدادات حسابي</a>
+            </section>
+        </aside>
     </div>
 </div>
-
-<div class="max-w-7xl mx-auto px-4 py-8">
-
-    {{-- إحصائيات المستخدم --}}
-    <h2 class="text-lg font-bold text-gray-900 mb-3">إحصائياتك الشخصية</h2>
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-        <div class="bg-white rounded-xl shadow-sm p-5 text-center">
-            <div class="text-3xl font-bold text-primary-600">{{ $stats['total'] }}</div>
-            <div class="text-xs text-gray-500 mt-1">إجمالي الإعلانات</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm p-5 text-center">
-            <div class="text-3xl font-bold text-red-500">{{ $stats['lost'] }}</div>
-            <div class="text-xs text-gray-500 mt-1">مفقودات</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm p-5 text-center">
-            <div class="text-3xl font-bold text-green-500">{{ $stats['found'] }}</div>
-            <div class="text-xs text-gray-500 mt-1">موجودات</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm p-5 text-center">
-            <div class="text-3xl font-bold text-blue-500">{{ $stats['active'] }}</div>
-            <div class="text-xs text-gray-500 mt-1">نشطة</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm p-5 text-center">
-            <div class="text-3xl font-bold text-emerald-500">{{ $stats['resolved'] }}</div>
-            <div class="text-xs text-gray-500 mt-1">مسترجعة</div>
-        </div>
-        <a href="{{ route('conversations.index') }}" class="bg-white rounded-xl shadow-sm p-5 text-center hover:shadow-md transition">
-            <div class="text-3xl font-bold text-accent-600">{{ $stats['unread_messages'] }}</div>
-            <div class="text-xs text-gray-500 mt-1">رسائل غير مقروءة</div>
-        </a>
-    </div>
-
-    {{-- إحصائيات المنصة --}}
-    <h2 class="text-lg font-bold text-gray-900 mb-3">إحصائيات المنصة</h2>
-    <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div class="text-center">
-                <div class="text-2xl font-bold text-primary-600">{{ number_format($platformStats['total_users']) }}</div>
-                <div class="text-xs text-gray-500 mt-1">مستخدم</div>
-            </div>
-            <div class="text-center">
-                <div class="text-2xl font-bold text-gray-900">{{ number_format($platformStats['total_items']) }}</div>
-                <div class="text-xs text-gray-500 mt-1">إعلان نشط</div>
-            </div>
-            <div class="text-center">
-                <div class="text-2xl font-bold text-red-500">{{ number_format($platformStats['total_lost']) }}</div>
-                <div class="text-xs text-gray-500 mt-1">مفقود</div>
-            </div>
-            <div class="text-center">
-                <div class="text-2xl font-bold text-green-500">{{ number_format($platformStats['total_found']) }}</div>
-                <div class="text-xs text-gray-500 mt-1">موجود</div>
-            </div>
-            <div class="text-center">
-                <div class="text-2xl font-bold text-blue-500">{{ number_format($platformStats['total_resolved']) }}</div>
-                <div class="text-xs text-gray-500 mt-1">تم استرجاعه</div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Quick actions --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <a href="{{ route('items.create') }}" class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition text-center group">
-            <div class="w-12 h-12 bg-primary-50 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:bg-primary-600 group-hover:text-white transition">
-                <i class="fa-solid fa-plus"></i>
-            </div>
-            <div class="text-sm font-medium">إعلان جديد</div>
-        </a>
-        <a href="{{ route('conversations.index') }}" class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition text-center group">
-            <div class="w-12 h-12 bg-accent-50 text-accent-600 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:bg-accent-500 group-hover:text-white transition">
-                <i class="fa-solid fa-envelope"></i>
-            </div>
-            <div class="text-sm font-medium">الرسائل</div>
-        </a>
-        <a href="{{ route('notifications.index') }}" class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition text-center group">
-            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:bg-blue-600 group-hover:text-white transition">
-                <i class="fa-solid fa-bell"></i>
-            </div>
-            <div class="text-sm font-medium">الإشعارات</div>
-        </a>
-        <a href="{{ route('profile.edit') }}" class="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition text-center group">
-            <div class="w-12 h-12 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:bg-gray-700 group-hover:text-white transition">
-                <i class="fa-solid fa-user"></i>
-            </div>
-            <div class="text-sm font-medium">الملف الشخصي</div>
-        </a>
-    </div>
-
-    {{-- Recent items --}}
-    <div class="bg-white rounded-xl shadow-sm p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-bold">آخر إعلاناتك</h2>
-            <a href="{{ route('items.index') }}" class="text-sm text-primary-600 hover:underline">عرض الكل</a>
-        </div>
-
-        @if($items->isEmpty())
-            <div class="text-center py-10 text-gray-400">
-                <i class="fa-solid fa-inbox text-5xl mb-3"></i>
-                <p>لم تنشر أي إعلان بعد</p>
-                <a href="{{ route('items.create') }}" class="inline-block mt-4 bg-primary-600 hover:bg-primary-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition">
-                    نشر أول إعلان
-                </a>
-            </div>
-        @else
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="border-b border-gray-200 text-gray-500">
-                        <tr>
-                            <th class="text-right py-3 px-2">الإعلان</th>
-                            <th class="text-right py-3 px-2">النوع</th>
-                            <th class="text-right py-3 px-2">الحالة</th>
-                            <th class="text-right py-3 px-2">التاريخ</th>
-                            <th class="text-right py-3 px-2">إجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($items as $item)
-                            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                                <td class="py-3 px-2">
-                                    <a href="{{ route('items.show', $item) }}" class="font-medium text-gray-900 hover:text-primary-600 line-clamp-1">
-                                        {{ $item->title }}
-                                    </a>
-                                </td>
-                                <td class="py-3 px-2">
-                                    <span class="px-2 py-1 rounded-full text-xs font-semibold text-white {{ $item->type === 'lost' ? 'bg-red-500' : 'bg-green-500' }}">
-                                        {{ $item->type === 'lost' ? 'مفقود' : 'موجود' }}
-                                    </span>
-                                </td>
-                                <td class="py-3 px-2">
-                                    <span class="text-xs">{{ $item->status_label }}</span>
-                                </td>
-                                <td class="py-3 px-2 text-gray-500 text-xs">{{ $item->created_at->format('Y-m-d') }}</td>
-                                <td class="py-3 px-2">
-                                    <div class="flex items-center gap-2">
-                                        <a href="{{ route('items.edit', $item) }}" class="text-blue-600 hover:text-blue-700">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </a>
-                                        <form method="POST" action="{{ route('items.destroy', $item) }}" onsubmit="return confirm('حذف الإعلان؟')" class="inline">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-700">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @endif
-    </div>
-</div>
-
 @endsection

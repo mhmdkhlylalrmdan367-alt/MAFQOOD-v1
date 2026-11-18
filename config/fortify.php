@@ -48,7 +48,7 @@ return [
     'features' => [
         Features::registration(),
         Features::resetPasswords(),
-        // Features::emailVerification(),  ← معطّلة
+        // Features::emailVerification(), // Temporarily disabled until email delivery is configured.
         Features::updateProfileInformation(),
         Features::updatePasswords(),
     ],

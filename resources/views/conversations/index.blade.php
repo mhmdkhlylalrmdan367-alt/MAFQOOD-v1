@@ -1,55 +1,55 @@
 @extends('layouts.app')
-
 @section('title', 'الرسائل')
-
 @section('content')
-
-<div class="bg-primary-600 text-white py-10">
-    <div class="max-w-5xl mx-auto px-4">
-        <h1 class="text-3xl font-bold">الرسائل</h1>
-        <p class="text-white/80 mt-1">محادثاتك مع أصحاب الإعلانات</p>
-    </div>
-</div>
-
-<div class="max-w-5xl mx-auto px-4 py-8">
-    @if($conversations->isEmpty())
-        <div class="bg-white rounded-xl shadow-sm p-12 text-center">
-            <i class="fa-solid fa-envelope-open text-6xl text-gray-300 mb-4"></i>
-            <h3 class="text-xl font-semibold text-gray-700 mb-2">لا توجد محادثات</h3>
-            <p class="text-gray-500 mb-6">عندما تراسل صاحب إعلان، ستظهر المحادثة هنا</p>
-            <a href="{{ route('items.index') }}" class="inline-block bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-semibold transition">
-                تصفح الإعلانات
+<div class="inbox">
+    <header class="inbox-header">
+        <div>
+            <span class="inbox-icon" aria-hidden="true"><i class="fa-regular fa-comments"></i></span>
+            <h1>رسائلك</h1>
+            <p>تابع التفاصيل مع أصحاب البلاغات، وكمّلوا حديثكم من هون.</p>
+        </div>
+        <a href="{{ route('items.index') }}" class="inbox-browse">تصفّح البلاغات <i class="fa-solid fa-arrow-left" aria-hidden="true"></i></a>
+    </header>
+    <section class="inbox-panel" aria-label="صندوق الوارد">
+        <form method="GET" action="{{ route('conversations.index') }}" class="inbox-toolbar">
+            <label class="inbox-search">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input type="search" name="q" maxlength="120" value="{{ $q }}" aria-label="بحث باسم الشخص أو الغرض" placeholder="اسم الشخص أو الغرض…">
+            </label>
+            <label class="inbox-unread"><input type="checkbox" name="unread" value="1" @checked(request('unread'))> غير المقروءة</label>
+            <button type="submit">بحث</button>
+            @if($q !== '' || request('unread'))<a href="{{ route('conversations.index') }}">مسح</a>@endif
+        </form>
+        <div class="inbox-list-heading"><h2>المحادثات</h2><span>{{ $conversations->total() }} محادثة</span></div>
+        @forelse($conversations as $conv)
+            @php
+                $other = $conv->otherUser(auth()->id());
+                $latest = $conv->latestMessage;
+                $item = $conv->item;
+            @endphp
+            <a href="{{ route('conversations.show', $conv) }}" class="inbox-conversation {{ $conv->unread_count ? 'has-unread' : '' }}">
+                <span class="inbox-avatar" aria-hidden="true">
+                    @if($other->avatar)<img src="{{ $other->avatarUrl() }}" alt="">@else{{ \Illuminate\Support\Str::substr($other->name, 0, 1) }}@endif
+                </span>
+                <div class="inbox-copy">
+                    <div class="inbox-row"><strong>{{ $other->name }}</strong><time>{{ $conv->last_message_at?->diffForHumans() }}</time></div>
+                    <span class="inbox-item">{{ $item?->title ?? 'بلاغ محذوف' }}</span>
+                    <p>@if($latest && (int) $latest->sender_id === (int) auth()->id())<span>أنت · </span>@endif{{ $latest?->body ?? 'افتح المحادثة لتبدأ الحديث.' }}</p>
+                </div>
+                <div class="inbox-trailing">
+                    @if($conv->unread_count)<span class="inbox-count" aria-label="{{ $conv->unread_count }} رسالة غير مقروءة">{{ $conv->unread_count }}</span>@endif
+                    @if($image = $item?->images->first())<img src="{{ asset('storage/' . $image->path) }}" alt="" loading="lazy">@else<i class="fa-solid fa-chevron-left" aria-hidden="true"></i>@endif
+                </div>
             </a>
-        </div>
-    @else
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden divide-y divide-gray-100">
-            @foreach($conversations as $conv)
-                @php $other = $conv->otherUser(auth()->id()); @endphp
-                <a href="{{ route('conversations.show', $conv) }}" class="flex items-center gap-4 p-4 hover:bg-gray-50 transition">
-                    <img src="{{ $other->avatarUrl() }}" class="w-12 h-12 rounded-full flex-shrink-0" alt="">
-
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="font-semibold text-gray-900">{{ $other->name }}</span>
-                            @if($conv->last_message_at)
-                                <span class="text-xs text-gray-400">{{ $conv->last_message_at->diffForHumans() }}</span>
-                            @endif
-                        </div>
-                        <div class="text-sm text-gray-500 line-clamp-1">
-                            <i class="fa-solid fa-box text-xs ml-1"></i>
-                            {{ $conv->item->title }}
-                        </div>
-                    </div>
-
-                    <i class="fa-solid fa-chevron-left text-gray-300"></i>
-                </a>
-            @endforeach
-        </div>
-
-        <div class="flex justify-center mt-6">
-            {{ $conversations->links() }}
-        </div>
-    @endif
+        @empty
+            <div class="inbox-empty">
+                <i class="fa-regular fa-envelope-open" aria-hidden="true"></i>
+                <h2>{{ $q || request('unread') ? 'ما في محادثات بهالاختيارات' : 'هون بتبدأ المحادثة' }}</h2>
+                <p>افتح بلاغ وراسل صاحبه، وبتلاقي حديثكم هون.</p>
+                <a href="{{ route('items.index') }}">شوف البلاغات</a>
+            </div>
+        @endforelse
+        <div class="p-4">{{ $conversations->links() }}</div>
+    </section>
 </div>
-
 @endsection

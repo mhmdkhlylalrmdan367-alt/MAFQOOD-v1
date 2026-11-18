@@ -5,6 +5,7 @@
 @section('content')
 
 <div class="max-w-4xl mx-auto px-4 py-8">
+<div class="chat-shell">
 
     {{-- Header --}}
     <div class="bg-white rounded-t-xl shadow-sm p-4 flex items-center gap-3 border-b border-gray-100">
@@ -22,37 +23,24 @@
     </div>
 
     {{-- Messages --}}
-    <div id="messages" class="bg-gray-50 shadow-sm p-4 h-[500px] overflow-y-auto space-y-3">
-        @forelse($messages as $msg)
-            @php $isMine = $msg->sender_id === auth()->id(); @endphp
-            <div class="flex {{ $isMine ? 'justify-end' : 'justify-start' }}">
-                <div class="max-w-[75%]">
-                    <div class="px-4 py-2.5 rounded-2xl {{ $isMine ? 'bg-primary-600 text-white rounded-br-sm' : 'bg-white text-gray-800 rounded-bl-sm shadow-sm' }}">
-                        {{ $msg->body }}
-                    </div>
-                    <div class="text-xs text-gray-400 mt-1 {{ $isMine ? 'text-left' : 'text-right' }}">
-                        {{ $msg->created_at->format('H:i') }}
-                    </div>
-                </div>
-            </div>
-        @empty
-            <div class="text-center text-gray-400 py-10">
-                <i class="fa-solid fa-comments text-4xl mb-3"></i>
-                <p>لا توجد رسائل بعد — ابدأ المحادثة</p>
-            </div>
-        @endforelse
+    <div class="relative">
+    <div id="messages" data-chat-url="{{ route('conversations.show', $conversation) }}" class="chat-scroll">
+        @include('conversations.messages')
     </div>
 
+    <button type="button" data-chat-latest class="chat-latest" hidden>آخر الرسائل ↓</button>
+    </div>
     {{-- Input --}}
     <form method="POST" action="{{ route('messages.store', $conversation) }}"
           class="bg-white rounded-b-xl shadow-sm p-3 border-t border-gray-100 flex gap-2">
         @csrf
-        <input type="text" name="body" required autofocus placeholder="اكتب رسالتك..."
-               class="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 outline-none">
-        <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white px-5 rounded-lg font-semibold transition">
+        <input type="text" name="body" required maxlength="2000" placeholder="اكتب رسالتك..."
+               class="min-w-0 flex-1 border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 outline-none">
+        <button type="submit" aria-label="إرسال الرسالة" class="bg-primary-600 hover:bg-primary-700 text-white px-5 rounded-lg font-semibold transition">
             <i class="fa-solid fa-paper-plane"></i>
         </button>
     </form>
+    </div>
 </div>
 
 @push('scripts')

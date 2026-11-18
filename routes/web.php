@@ -65,7 +65,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/items/{item}/report', [ReportController::class, 'create'])->whereNumber('item')->name('reports.create');
     Route::post('/items/{item}/report', [ReportController::class, 'store'])->whereNumber('item')->name('reports.store');
 
+    Route::get('/notifications/feed', [NotificationController::class, 'feed'])->middleware('throttle:30,1')->name('notifications.feed');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
 

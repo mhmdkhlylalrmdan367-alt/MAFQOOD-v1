@@ -23,11 +23,21 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             $user->updateProfilePhoto($input['photo']);
         }
 
+        $emailChanged = $user->email !== $input['email'];
+
+        if ($emailChanged) {
+            $user->email_verified_at = null;
+        }
+
         $user->forceFill([
             'name' => $input['name'],
             'email' => $input['email'],
             'phone' => $input['phone'] ?? null,
             'region_id' => $input['region_id'] ?? null,
         ])->save();
+
+        if ($emailChanged && $user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && \Laravel\Fortify\Features::enabled(\Laravel\Fortify\Features::emailVerification())) {
+            $user->sendEmailVerificationNotification();
+        }
     }
 }

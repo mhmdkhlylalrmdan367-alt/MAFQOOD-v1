@@ -5,91 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'لوحة التحكم') - {{ __('messages.app_name') }} للإدارة</title>
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    @include('admin.partials.styles')
     @stack('styles')
 </head>
-<body class="bg-gray-100 min-h-screen">
-
-<div class="flex min-h-screen">
-
-    {{-- Sidebar --}}
-    <aside class="w-64 bg-gray-900 text-white flex-shrink-0">
-        <div class="p-6 border-b border-gray-800">
-            <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold flex items-center gap-2">
-                <i class="fa-solid fa-shield-halved"></i>
-                {{ __('messages.app_name') }} للإدارة
-            </a>
-        </div>
-
-        <nav class="p-4 space-y-1">
-            <a href="{{ route('admin.dashboard') }}"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.dashboard') ? 'bg-primary-600' : '' }}">
-                <i class="fa-solid fa-chart-line w-5"></i>
-                <span>لوحة المعلومات</span>
-            </a>
-            <a href="{{ route('admin.users.index') }}"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.users.*') ? 'bg-primary-600' : '' }}">
-                <i class="fa-solid fa-users w-5"></i>
-                <span>المستخدمون</span>
-            </a>
-            <a href="{{ route('admin.items.index') }}"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.items.*') ? 'bg-primary-600' : '' }}">
-                <i class="fa-solid fa-box w-5"></i>
-                <span>الإعلانات</span>
-            </a>
-            <a href="{{ route('admin.categories.index') }}"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.categories.*') ? 'bg-primary-600' : '' }}">
-                <i class="fa-solid fa-tags w-5"></i>
-                <span>التصنيفات</span>
-            </a>
-            <a href="{{ route('admin.reports.index') }}"
-               class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-gray-800 transition {{ request()->routeIs('admin.reports.*') ? 'bg-primary-600' : '' }}">
-                <i class="fa-solid fa-flag w-5"></i>
-                <span>البلاغات</span>
-            </a>
+<body class="admin-body">
+<a href="#admin-content" class="admin-skip">انتقل إلى المحتوى</a>
+<div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-navigation" aria-label="القائمة الرئيسية">
+        <a href="{{ route('admin.dashboard') }}" class="admin-brand">
+            <span class="admin-brand-mark"><i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i></span>
+            <span><strong>{{ __('messages.app_name') }}</strong><small>مساحة الإدارة</small></span>
+        </a>
+        <div class="admin-nav-caption">إدارة المنصة</div>
+        <nav class="admin-nav" aria-label="أقسام الإدارة">
+            @foreach([
+                ['admin.dashboard', 'admin.dashboard', 'fa-chart-pie', 'نظرة عامة', 'متابعة أداء المنصة'],
+                ['admin.users.index', 'admin.users.*', 'fa-users', 'المستخدمون', 'الحسابات والصلاحيات'],
+                ['admin.items.index', 'admin.items.*', 'fa-box-open', 'الإعلانات', 'المفقودات والموجودات'],
+                ['admin.categories.index', 'admin.categories.*', 'fa-layer-group', 'التصنيفات', 'تنظيم محتوى المنصة'],
+                ['admin.reports.index', 'admin.reports.*', 'fa-shield-halved', 'البلاغات', 'المراجعة وحماية المجتمع'],
+            ] as [$link, $pattern, $icon, $label, $description])
+                <a href="{{ route($link) }}" class="admin-nav-link {{ request()->routeIs($pattern) ? 'is-active' : '' }}" @if(request()->routeIs($pattern)) aria-current="page" @endif>
+                    <i class="fa-solid {{ $icon }}" aria-hidden="true"></i>
+                    <span><strong>{{ $label }}</strong><small>{{ $description }}</small></span>
+                    @if(request()->routeIs($pattern))<span class="admin-nav-dot" aria-hidden="true"></span>@endif
+                </a>
+            @endforeach
         </nav>
-
-        <div class="p-4 mt-auto border-t border-gray-800">
-            <a href="{{ route('home') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-gray-800 transition text-gray-400">
-                <i class="fa-solid fa-arrow-left w-5"></i>
-                <span>العودة للموقع</span>
-            </a>
+        <div class="admin-sidebar-bottom">
+            <div class="admin-purpose"><i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i><strong>كل عودة، بداية حكاية.</strong><p>مساحة أكثر أماناً تجمع المفقودات بأصحابها.</p></div>
+            <a href="{{ route('home') }}" class="admin-site-link"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> زيارة الموقع</a>
+            <span class="admin-sidebar-note">{{ __('messages.app_name') }} · لوحة الإدارة</span>
         </div>
     </aside>
-
-    {{-- Main content --}}
-    <div class="flex-1 flex flex-col">
-
-        {{-- Topbar --}}
-        <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-            <h1 class="text-xl font-semibold text-gray-800">@yield('title', 'لوحة التحكم')</h1>
-            <div class="flex items-center gap-4">
-                <span class="text-sm text-gray-600">{{ auth()->user()->name }}</span>
-                <img src="{{ auth()->user()->avatarUrl() }}" class="w-9 h-9 rounded-full" alt="">
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="text-red-600 hover:text-red-700">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
-                </form>
+    <div class="admin-workspace">
+        <header class="admin-topbar">
+            <div class="admin-topbar-start">
+                <button class="admin-menu-button admin-icon-button" type="button" aria-label="فتح قائمة الإدارة" aria-controls="admin-navigation" aria-expanded="false" data-admin-menu><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+                <a href="{{ route('admin.dashboard') }}" class="admin-breadcrumb-home">الإدارة</a><span class="admin-breadcrumb-divider" aria-hidden="true">/</span><span>@yield('title', 'لوحة التحكم')</span>
+            </div>
+            <div class="admin-topbar-actions">
+                <span class="admin-date"><i class="fa-regular fa-calendar" aria-hidden="true"></i> {{ now()->format('Y / m / d') }}</span>
+                <div class="admin-account"><img src="{{ auth()->user()->avatarUrl() }}" width="40" height="40" alt=""><span><strong>{{ auth()->user()->name }}</strong><small>إدارة المنصة</small></span></div>
+                <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="admin-icon-button admin-logout" aria-label="تسجيل الخروج" title="تسجيل الخروج"><i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i></button></form>
             </div>
         </header>
-
-        <main class="flex-1 p-6">
-            @if(session('success'))
-                <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">{{ session('success') }}</div>
-            @endif
-            @if(session('error'))
-                <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">{{ session('error') }}</div>
-            @endif
-
+        <main id="admin-content" class="admin-content" tabindex="-1">
+            <div class="admin-page-heading"><div><p class="admin-page-kicker">{{ __('messages.app_name') }} / مساحة الإدارة</p><h1>@yield('title', 'لوحة التحكم')</h1><p>@yield('description', 'أدر تفاصيل المنصة، وتابع ما يحتاج إلى اهتمامك من مكان واحد.')</p></div><a href="{{ route('home') }}" class="admin-button admin-button-secondary"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> عرض الموقع</a></div>
+            @if(session('success'))<div class="admin-alert admin-alert-success" role="status"><i class="fa-solid fa-circle-check" aria-hidden="true"></i>{{ session('success') }}</div>@endif
+            @if(session('error'))<div class="admin-alert admin-alert-error" role="alert"><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>{{ session('error') }}</div>@endif
             @yield('content')
         </main>
+        <footer class="admin-footer"><span>{{ __('messages.app_name') }} · نقرّب المسافات، ونعيد الأمانات.</span><span>إدارة المنصة</span></footer>
     </div>
 </div>
-
+@include('admin.partials.scripts')
 @stack('scripts')
 </body>
 </html>

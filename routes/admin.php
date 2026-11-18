@@ -7,7 +7,18 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'admin'])
+
+Route::get('/admin/login', function () {
+    if (auth()->check() && auth()->user()->isAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+    return view('auth.admin-login');
+})->name('admin.login');
+
+Route::post('/admin/login', [\Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'store'])
+    ->middleware('throttle:login')->name('admin.login.store');
+
+Route::middleware(['admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {

@@ -38,13 +38,28 @@
 
     @include('components.footer')
 
-    @unless(request()->routeIs('items.create', 'items.edit'))
+    @if(request()->routeIs('home'))
         <a href="{{ route('items.create') }}"
            class="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 inline-flex min-h-12 items-center gap-2 rounded-full border border-white/20 bg-[#153e35] px-4 text-sm font-extrabold text-white shadow-lg transition-colors hover:bg-[#22594b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#217161] sm:right-6 sm:px-5">
             <i class="fa-solid fa-plus text-[#efd8a8]" aria-hidden="true"></i>
             انشر بلاغ
         </a>
-    @endunless
+    @endif
+
+    @auth
+        <aside data-message-alert data-feed="{{ route('notifications.feed') }}"
+               class="fixed bottom-24 right-4 z-50 w-[calc(100%-2rem)] max-w-sm rounded-2xl border border-[#b9cec3] bg-[#fffefa] p-4 text-[#153e35] shadow-xl" hidden>
+            <div class="flex items-start justify-between gap-3">
+                <a data-message-link class="min-w-0 flex-1 rounded-lg focus-visible:outline-2 focus-visible:outline-[#217161]">
+                    <strong data-message-sender class="block text-sm"></strong>
+                    <span class="mt-1 block text-xs text-[#53675f]">أرسل لك رسالة جديدة</span>
+                    <span data-message-body class="mt-2 block truncate text-sm"></span>
+                    <span class="mt-2 block text-xs font-bold underline">افتح المحادثة</span>
+                </a>
+                <button type="button" data-message-dismiss aria-label="إغلاق التنبيه" class="grid size-9 place-items-center rounded-lg hover:bg-[#e4efe8]">×</button>
+            </div>
+        </aside>
+    @endauth
 
     @stack('scripts')
 </body>

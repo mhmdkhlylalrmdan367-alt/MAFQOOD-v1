@@ -10,15 +10,29 @@ use Illuminate\Support\Facades\Auth;
 
 class ConversationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $conversations = Conversation::forUser(Auth::id())
-            ->with(['item', 'sender', 'receiver'])
-            ->orderByDesc('last_message_at')
-            ->paginate(20);
+        $filters = $request->validate([
+            'q' => ['nullable', 'string', 'max:120'],
+            'unread' => ['nullable', 'in:1'],
+        ]);
+        $q = trim($filters['q'] ?? '');
+        $userId = Auth::id();
+        $conversations = Conversation::query()
+            ->where(fn ($query) => $query->where('sender_id', $userId)->orWhere('receiver_id', $userId))
+            ->when($q !== '', fn ($query) => $query->where(function ($query) use ($q, $userId) {
+                $query->whereHas('item', fn ($item) => $item->where('title', 'like', '%'.$q.'%'))
+                    ->orWhereHas('sender', fn ($user) => $user->where('id', '!=', $userId)->where('name', 'like', '%'.$q.'%'))
+                    ->orWhereHas('receiver', fn ($user) => $user->where('id', '!=', $userId)->where('name', 'like', '%'.$q.'%'));
+            }))
+            ->when($filters['unread'] ?? false, fn ($query) => $query->whereHas('messages', fn ($messages) => $messages->where('sender_id', '!=', $userId)->whereNull('read_at')))
+            ->with(['item.images', 'sender', 'receiver', 'latestMessage'])
+            ->withCount(['messages as unread_count' => fn ($messages) => $messages->where('sender_id', '!=', $userId)->whereNull('read_at')])
+            ->orderByDesc('last_message_at')->orderByDesc('id')->paginate(20)->appends($filters);
 
-        return view('conversations.index', compact('conversations'));
+        return view('conversations.index', compact('conversations', 'q'));
     }
+
 
     public function store(Request $request)
 {
@@ -80,6 +94,17 @@ class ConversationController extends Controller
 
         $messages = $conversation->messages()->with('sender')->get();
         $conversation->load(['item', 'sender', 'receiver']);
+        $other = $conversation->otherUser(Auth::id());
+        Auth::user()->unreadNotifications()
+            ->where('type', NewMessageNotification::class)->get()
+            ->filter(fn ($notification) => (int) ($notification->data['conversation_id'] ?? 0) === (int) $conversation->id)
+            ->each->markAsRead();
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'html' => view('conversations.messages', compact('messages', 'other'))->render(),
+            ])->header('Cache-Control', 'no-store');
+        }
 
         return view('conversations.show', compact('conversation', 'messages'));
     }

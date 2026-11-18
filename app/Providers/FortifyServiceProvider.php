@@ -22,6 +22,31 @@ class FortifyServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = \App\Models\User::where('email', $request->input('email'))->first();
+            if (!$user || !\Illuminate\Support\Facades\Hash::check($request->input('password'), $user->password) || !$user->is_active) {
+                return null;
+            }
+            if ($request->routeIs('admin.login.store') && !$user->isAdmin()) {
+                return null;
+            }
+            return $user;
+        });
+
+        $this->app->bind(\Laravel\Fortify\Contracts\LoginResponse::class, function () {
+            return new class implements \Laravel\Fortify\Contracts\LoginResponse {
+                public function toResponse($request)
+                {
+                    if ($request->wantsJson()) {
+                        return response()->json(['two_factor' => false]);
+                    }
+                    return $request->routeIs('admin.login.store')
+                        ? redirect()->route('admin.dashboard')
+                        : redirect()->intended(config('fortify.home'));
+                }
+            };
+        });
+
         Fortify::createUsersUsing(CreateNewUser::class);
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);

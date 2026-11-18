@@ -1,15 +1,18 @@
 @php
     $navLinks = [
         ['الرئيسية', route('home'), request()->routeIs('home')],
-        ['المفقودات', route('items.index', ['type' => 'lost']), request()->routeIs('items.index') && request('type') === 'lost'],
-        ['الموجودات', route('items.index', ['type' => 'found']), request()->routeIs('items.index') && request('type') === 'found'],
-        ['التصنيفات', route('categories.index'), request()->routeIs('categories.*')],
-        ['كيف يعمل؟', route('how-it-works'), request()->routeIs('how-it-works')],
+        ['ابحث عن غرض', route('items.index'), request()->routeIs('items.index', 'search')],
     ];
-@endphp
 
+    if (auth()->check()) {
+        $navLinks[] = ['بلاغاتي', route('dashboard'), request()->routeIs('dashboard')];
+        $navLinks[] = ['رسائلي', route('conversations.index'), request()->routeIs('conversations.*')];
+    } else {
+        $navLinks[] = ['كيف بتشتغل المنصة؟', route('how-it-works'), request()->routeIs('how-it-works')];
+    }
+@endphp
 <nav aria-label="التنقّل الرئيسي" class="sham-nav sticky top-0 z-50 border-b border-[#e6e3d9] bg-[#fcfbf7] text-[#193d35] shadow-sm">
-    <div class="relative mx-auto flex min-h-18 max-w-7xl items-center justify-between gap-2 px-3 sm:px-6">
+    <div class="relative mx-auto flex min-h-18 w-full items-center justify-between gap-2 px-3 sm:px-6">
         <a href="{{ route('home') }}" class="sham-brand inline-flex shrink-0 items-center gap-2 text-sm font-extrabold tracking-wide sm:text-lg">
             <span class="sham-brand-icon relative size-9 shrink-0 overflow-hidden rounded-[30%] sm:size-11">
                 <img src="{{ asset('images/luqya-sham-logo.png') }}" alt="" width="1536" height="1024"
@@ -34,8 +37,8 @@
             @endforeach
         </div>
 
-        <div class="flex items-center gap-1.5 sm:gap-2">
-            <div class="flex items-center gap-0.5 rounded-xl border border-[#dce6db] bg-[#eef4ed] p-0.5 sm:gap-1 sm:p-1">
+        <div class="nav-account-actions flex items-center gap-1.5 sm:gap-2">
+            <div class="flex items-center gap-1 sm:gap-2">
                 <a href="{{ route('lang.switch', app()->getLocale() === 'ar' ? 'en' : 'ar') }}" aria-label="تبديل اللغة"
                    class="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg px-1.5 text-[11px] font-extrabold text-[#28594b] transition-colors hover:bg-white sm:px-2.5">
                     <i class="fa-solid fa-globe hidden sm:inline" aria-hidden="true"></i>
@@ -43,24 +46,24 @@
                 </a>
                 @auth
                     @php $unread = auth()->user()->unreadNotifications()->count(); @endphp
-                    <a href="{{ route('notifications.index') }}" aria-label="الإشعارات ({{ $unread }} غير مقروء)"
-                       class="sham-nav-bell {{ $unread > 0 ? 'sham-nav-bell--unread' : '' }} relative grid size-8 place-items-center rounded-lg text-[#28594b] transition-colors hover:bg-white">
-                        <i class="fa-regular fa-bell" aria-hidden="true"></i>
-                        @if($unread > 0)
-                            <span aria-hidden="true" class="absolute -top-1 -end-1 rounded-full bg-[#ad553c] px-1 text-[10px] font-bold text-white">{{ $unread > 99 ? '99+' : $unread }}</span>
-                        @endif
-                    </a>
-                    <a href="{{ route('conversations.index') }}" aria-label="الرسائل"
-                       class="grid size-8 place-items-center rounded-lg text-[#28594b] transition-colors hover:bg-white">
-                        <i class="fa-regular fa-comment-dots" aria-hidden="true"></i>
-                    </a>
+                    <details class="notification-menu">
+                        <summary aria-label="الإشعارات" class="sham-nav-bell relative grid size-8 cursor-pointer list-none place-items-center rounded-lg text-[#28594b] hover:bg-white">
+                            <i class="fa-regular fa-bell" aria-hidden="true"></i>
+                            <span data-notification-count @if(!$unread) hidden @endif aria-hidden="true" class="absolute -top-1 -end-1 rounded-full bg-[#ad553c] px-1 text-[10px] font-bold text-white">{{ $unread > 99 ? '99+' : $unread }}</span>
+                        </summary>
+                        <section class="notification-panel" aria-label="آخر الإشعارات">
+                            <header><strong>الإشعارات</strong><button type="button" data-close-notifications aria-label="إغلاق الإشعارات">×</button></header>
+                            <div data-notification-list><p>جاري تحميل الإشعارات…</p></div>
+                        </section>
+                    </details>
+
                 @endauth
             </div>
             @auth
                 <details class="relative">
-                    <summary aria-label="قائمة الحساب" class="flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-xl border border-[#cbdcd0] bg-white px-1.5 py-1 transition-colors hover:bg-[#eef4ed] sm:px-2 [&::-webkit-details-marker]:hidden">
+                    <summary aria-label="قائمة الحساب" class="flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-full bg-transparent px-1.5 py-1 transition-colors hover:bg-[#eef4ed] sm:px-2 [&::-webkit-details-marker]:hidden">
                         @if(auth()->user()->avatar)
-                            <img src="{{ auth()->user()->avatarUrl() }}" class="size-7 rounded-lg object-cover" alt="">
+                            <img src="{{ auth()->user()->avatarUrl() }}" class="size-8 rounded-full object-cover" alt="">
                         @else
                             <span aria-hidden="true" class="grid size-7 place-items-center rounded-lg bg-[#18594b] text-xs font-extrabold text-[#fff4d8]">{{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr(auth()->user()->name, 0, 1)) }}</span>
                         @endif

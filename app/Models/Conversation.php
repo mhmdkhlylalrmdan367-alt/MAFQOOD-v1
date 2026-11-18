@@ -27,6 +27,12 @@ class Conversation extends Model
         return $this->belongsTo(User::class, 'receiver_id');
     }
 
+    public function latestMessage(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Message::class)->latestOfMany();
+    }
+
+
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class)->orderBy('created_at');

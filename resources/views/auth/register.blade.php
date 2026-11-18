@@ -1,67 +1,48 @@
 @extends('layouts.guest')
-
 @section('title', 'إنشاء حساب')
-
 @section('content')
-    <h2 class="text-2xl font-bold text-gray-900 mb-2">إنشاء حساب جديد</h2>
-    <p class="text-gray-500 text-sm mb-6">انضم إلينا وساعد الآخرين في استعادة ممتلكاتهم</p>
-
-    @if($errors->any())
-        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">
-            <ul class="list-disc list-inside space-y-1">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <form method="POST" action="{{ route('register') }}" class="space-y-4">
-        @csrf
-
+<div class="signup-intro">
+    <span class="signup-symbol" aria-hidden="true"><i class="fa-solid fa-hand-holding-heart"></i></span>
+    <h1>خلّينا نرجّع الضايع لأصحابه.</h1>
+    <p>أنشئ حسابك لتنشر بلاغاتك وتتواصل مع أصحاب الأغراض.</p>
+</div>
+@if($errors->any())
+    <div role="alert" class="signup-error-summary">راجع الحقول المعلّمة تحت، وعدّلها لتكمل إنشاء الحساب.</div>
+@endif
+<form method="POST" action="{{ route('register') }}" class="signup-form">
+    @csrf
+    @foreach([
+        ['name', 'الاسم الكامل', 'text', 'مثلًا محمد أحمد', 'name', 'fa-user'],
+        ['email', 'البريد الإلكتروني', 'email', 'name@example.com', 'email', 'fa-envelope'],
+        ['phone', 'رقم الهاتف', 'tel', '+963 9XX XXX XXX', 'tel', 'fa-phone'],
+        ['password', 'كلمة المرور', 'password', 'اختار كلمة مرور من 8 أحرف أو أكثر', 'new-password', 'fa-lock'],
+        ['password_confirmation', 'تأكيد كلمة المرور', 'password', 'اكتب كلمة المرور مرة تانية', 'new-password', 'fa-shield-halved'],
+    ] as [$name, $label, $type, $placeholder, $autocomplete, $icon])
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">الاسم الكامل</label>
-            <input type="text" name="name" value="{{ old('name') }}" required autofocus
-                   class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                   placeholder="محمد أحمد">
+            <label for="signup-{{ $name }}">{{ $label }} @if($name === 'phone')<small>اختياري</small>@endif</label>
+            <div class="signup-field">
+                <i class="fa-solid {{ $icon }}" aria-hidden="true"></i>
+                <input id="signup-{{ $name }}" name="{{ $name }}" type="{{ $type }}"
+                    placeholder="{{ $placeholder }}" autocomplete="{{ $autocomplete }}"
+                    @if($type !== 'password') value="{{ old($name) }}" @endif
+                    @if(in_array($name, ['email', 'phone'])) dir="ltr" @endif
+                    @if($name !== 'phone') required @endif
+                    @if($type === 'password') minlength="8" @endif
+                    @if($name === 'name') maxlength="255" @endif
+                    @if($name === 'email') maxlength="255" @endif
+                    @if($name === 'phone') maxlength="20" @endif
+                    @error($name) aria-invalid="true" aria-describedby="signup-{{ $name }}-error" @enderror>
+                @if($type === 'password')
+                    <button type="button" data-password-toggle="signup-{{ $name }}" aria-label="إظهار {{ $label }}" aria-pressed="false">
+                        <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                    </button>
+                @endif
+            </div>
+            @error($name)<p id="signup-{{ $name }}-error" class="signup-error">{{ $message }}</p>@enderror
         </div>
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
-            <input type="email" name="email" value="{{ old('email') }}" required
-                   class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                   placeholder="you@example.com">
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف (اختياري)</label>
-            <input type="text" name="phone" value="{{ old('phone') }}"
-                   class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                   placeholder="+963 999 999 999">
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
-            <input type="password" name="password" required
-                   class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                   placeholder="••••••••">
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">تأكيد كلمة المرور</label>
-            <input type="password" name="password_confirmation" required
-                   class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                   placeholder="••••••••">
-        </div>
-
-        <button type="submit"
-                class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 rounded-lg transition">
-            إنشاء الحساب
-        </button>
-    </form>
-
-    <p class="text-center text-sm text-gray-500 mt-6">
-        لديك حساب بالفعل؟
-        <a href="{{ route('login') }}" class="text-primary-600 font-medium hover:underline">تسجيل الدخول</a>
-    </p>
+    @endforeach
+    <p class="signup-privacy">تعرّف على طريقة استخدام بياناتك في <a href="{{ route('privacy') }}">سياسة الخصوصية</a>.</p>
+    <button type="submit" class="signup-submit">إنشاء الحساب <i class="fa-solid fa-arrow-left" aria-hidden="true"></i></button>
+    <p class="signup-login">عندك حساب؟ <a href="{{ route('login') }}">تسجيل الدخول</a></p>
+</form>
 @endsection

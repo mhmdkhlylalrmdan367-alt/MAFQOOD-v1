@@ -1,50 +1,52 @@
 @extends('layouts.guest')
-
 @section('title', 'تسجيل الدخول')
-
 @section('content')
-    <h2 class="text-2xl font-bold text-gray-900 mb-2">تسجيل الدخول</h2>
-    <p class="text-gray-500 text-sm mb-6">أدخل بياناتك للوصول إلى حسابك</p>
+<div class="signup-intro">
+    <span class="signup-symbol" aria-hidden="true"><i class="fa-solid fa-door-open"></i></span>
+    <h1>نورت لُقيا الشام.</h1>
+    <p>سجّل دخولك لتتابع بلاغاتك ورسائلك.</p>
+</div>
+@if($errors->any())
+    <div id="login-error" role="alert" class="signup-error-summary">{{ $errors->first() }}</div>
+@endif
 
-    @if($errors->any())
-        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">
-            {{ $errors->first() }}
+<form method="POST" action="{{ route('login') }}" class="signup-form">
+    @csrf
+    <div>
+        <label for="login-email">البريد الإلكتروني</label>
+        <div class="signup-field">
+            <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+            <input id="login-email" type="email" name="email" value="{{ old('email') }}" autocomplete="username"
+                   dir="ltr" maxlength="255" required placeholder="name@example.com"
+                   @if($errors->any()) aria-describedby="login-error" @endif>
         </div>
-    @endif
+    </div>
 
-    <form method="POST" action="{{ route('login') }}" class="space-y-4">
-        @csrf
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
-            <input type="email" name="email" value="{{ old('email') }}" required autofocus
-                   class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                   placeholder="you@example.com">
+    <div>
+        <label for="login-password">كلمة المرور</label>
+        <div class="signup-field">
+            <i class="fa-solid fa-lock" aria-hidden="true"></i>
+            <input id="login-password" type="password" name="password" autocomplete="current-password" required
+                   placeholder="اكتب كلمة مرور حسابك" @if($errors->any()) aria-describedby="login-error" @endif>
+            <button type="button" data-password-toggle="login-password" aria-label="إظهار كلمة المرور" aria-pressed="false">
+                <i class="fa-regular fa-eye" aria-hidden="true"></i>
+            </button>
         </div>
+    </div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
-            <input type="password" name="password" required
-                   class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
-                   placeholder="••••••••">
-        </div>
+    <div class="login-options">
+        <label for="login-remember"><input id="login-remember" type="checkbox" name="remember" value="1" @checked(old('remember'))> تذكّرني</label>
+        <a href="{{ route('password.request') }}">نسيت كلمة المرور؟</a>
+    </div>
 
-        <div class="flex items-center justify-between text-sm">
-            <label class="flex items-center gap-2">
-                <input type="checkbox" name="remember" class="rounded border-gray-300">
-                <span>تذكرني</span>
-            </label>
-            <a href="{{ route('password.request') }}" class="text-primary-600 hover:underline">نسيت كلمة المرور؟</a>
-        </div>
+    <button type="submit" class="signup-submit">
+        تسجيل الدخول <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+    </button>
 
-        <button type="submit"
-                class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 rounded-lg transition">
-            تسجيل الدخول
-        </button>
-    </form>
-
-    <p class="text-center text-sm text-gray-500 mt-6">
-        ليس لديك حساب؟
-        <a href="{{ route('register') }}" class="text-primary-600 font-medium hover:underline">أنشئ حسابًا</a>
-    </p>
+    <div class="login-register">
+        <p>أول مرة معنا؟</p>
+        <a href="{{ route('register') }}">أنشئ حسابك <i class="fa-solid fa-arrow-left" aria-hidden="true"></i></a>
+    </div>
+    <a href="{{ route('home') }}" class="login-home">العودة للرئيسية</a>
+</form>
 @endsection
