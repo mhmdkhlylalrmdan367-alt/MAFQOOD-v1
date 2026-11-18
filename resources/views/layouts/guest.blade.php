@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@hasSection('title')@yield('title') · @endif{{ __('messages.app_name') }}</title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/site-ui.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body class="{{ request()->routeIs('register', 'login', 'admin.login') ? 'signup-page' : '' }} {{ request()->routeIs('login', 'admin.login') ? 'login-page' : '' }} bg-gradient-to-br from-primary-600 to-primary-800 min-h-screen flex items-center justify-center p-4">
+<body class="{{ request()->routeIs('admin.*') ? '' : 'site-public-guest' }} {{ request()->routeIs('register', 'login', 'admin.login', 'password.*', 'verification.*') ? 'signup-page' : '' }} {{ request()->routeIs('login', 'admin.login') ? 'login-page' : '' }} bg-gradient-to-br from-primary-600 to-primary-800 min-h-screen flex items-center justify-center p-4">
 
     <div class="guest-shell w-full max-w-md">
         <div class="guest-brand text-center mb-6">
@@ -23,7 +23,7 @@
 
         <div class="signup-panel bg-white rounded-2xl shadow-2xl p-5 sm:p-8">
             @if(session('status'))
-                <div class="mb-4 bg-blue-100 text-blue-700 px-4 py-3 rounded-lg text-sm">
+                <div class="mb-4 bg-primary-100 text-brand px-4 py-3 rounded-lg text-sm">
                     {{ session('status') }}
                 </div>
             @endif

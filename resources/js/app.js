@@ -223,3 +223,10 @@ if (chat && latestButton) {
     latestButton.addEventListener('click', () => chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' }));
     updateLatest();
 }
+
+if (document.querySelector('[data-admin-charts]')) {
+    import('./admin-charts.js').catch(() => {
+        document.querySelectorAll('.admin-data-summary').forEach((details) => { details.open = true; });
+        document.querySelectorAll('.admin-chart-wrap').forEach((chart) => { chart.hidden = true; });
+    });
+}

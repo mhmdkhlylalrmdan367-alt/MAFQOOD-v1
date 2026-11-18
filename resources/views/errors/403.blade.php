@@ -2,10 +2,11 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>403 - غير مصرح</title>
     @vite(['resources/css/app.css'])
 </head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+<body class="site-public-error bg-gray-50 min-h-screen flex items-center justify-center p-4">
     <div class="text-center">
         <div class="text-9xl font-bold text-red-500 mb-4">403</div>
         <h1 class="text-3xl font-bold text-gray-900 mb-3">غير مصرح لك بالوصول</h1>

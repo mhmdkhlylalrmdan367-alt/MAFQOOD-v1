@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SiteReportController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,9 @@ Route::middleware(['admin'])
     ->group(function () {
 
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/site-reports', [SiteReportController::class, 'index'])->name('site-reports.index');
+        Route::get('/site-reports/export', [SiteReportController::class, 'export'])->name('site-reports.export');
 
         // Users
         Route::resource('users', UserController::class)->except(['create', 'store', 'show']);

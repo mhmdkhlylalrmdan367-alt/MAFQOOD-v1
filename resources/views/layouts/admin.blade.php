@@ -15,13 +15,14 @@
 <div class="admin-shell">
     <aside class="admin-sidebar" id="admin-navigation" aria-label="القائمة الرئيسية">
         <a href="{{ route('admin.dashboard') }}" class="admin-brand">
-            <span class="admin-brand-mark"><i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i></span>
+            <span class="admin-brand-logo"><img src="{{ asset('images/luqya-sham-logo.png') }}" alt="" width="1536" height="1024"></span>
             <span><strong>{{ __('messages.app_name') }}</strong><small>مساحة الإدارة</small></span>
         </a>
         <div class="admin-nav-caption">إدارة المنصة</div>
         <nav class="admin-nav" aria-label="أقسام الإدارة">
             @foreach([
                 ['admin.dashboard', 'admin.dashboard', 'fa-chart-pie', 'نظرة عامة', 'متابعة أداء المنصة'],
+                ['admin.site-reports.index', 'admin.site-reports.*', 'fa-chart-column', 'تقارير الموقع', 'الإحصاءات وتصدير Excel'],
                 ['admin.users.index', 'admin.users.*', 'fa-users', 'المستخدمون', 'الحسابات والصلاحيات'],
                 ['admin.items.index', 'admin.items.*', 'fa-box-open', 'الإعلانات', 'المفقودات والموجودات'],
                 ['admin.categories.index', 'admin.categories.*', 'fa-layer-group', 'التصنيفات', 'تنظيم محتوى المنصة'],
@@ -48,7 +49,7 @@
             </div>
             <div class="admin-topbar-actions">
                 <span class="admin-date"><i class="fa-regular fa-calendar" aria-hidden="true"></i> {{ now()->format('Y / m / d') }}</span>
-                <div class="admin-account"><img src="{{ auth()->user()->avatarUrl() }}" width="40" height="40" alt=""><span><strong>{{ auth()->user()->name }}</strong><small>إدارة المنصة</small></span></div>
+                <div class="admin-account">@if(auth()->user()->avatar)<img src="{{ auth()->user()->avatarUrl() }}" width="40" height="40" alt="">@else<span class="admin-avatar" aria-hidden="true">{{ mb_substr(auth()->user()->name, 0, 1) }}</span>@endif<span><strong>{{ auth()->user()->name }}</strong><small>إدارة المنصة</small></span></div>
                 <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="admin-icon-button admin-logout" aria-label="تسجيل الخروج" title="تسجيل الخروج"><i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i></button></form>
             </div>
         </header>

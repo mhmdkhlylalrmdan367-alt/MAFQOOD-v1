@@ -23,7 +23,7 @@
             <div class="home-hero-actions">
                 <a href="{{ route('items.create', ['type' => 'lost']) }}" class="home-hero-button home-hero-button--light">
                     <i class="fa-solid fa-magnifying-glass-location" aria-hidden="true"></i>
-                    أبحث عن مفقود
+                    بلّغ عن مفقود
                 </a>
                 <a href="{{ route('items.create', ['type' => 'found']) }}" class="home-hero-button home-hero-button--outline">
                     <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i>
@@ -135,10 +135,10 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-8">
         <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
             <div>
-                <h2 id="home-category-title" class="text-2xl font-extrabold text-[#153e35] sm:text-3xl">شو عم تدوّر عليه؟</h2>
-                <p class="mt-1 text-sm text-[#53675f]">اختار فئة لتشوف البلاغات المرتبطة فيها.</p>
+                <h2 id="home-category-title" class="text-2xl font-extrabold text-brand sm:text-3xl">شو عم تدوّر عليه؟</h2>
+                <p class="mt-1 text-sm text-brand-muted">اختار فئة لتشوف البلاغات المرتبطة فيها.</p>
             </div>
-            <a href="{{ route('items.index') }}" class="rounded-full border border-[#b9cec3] bg-white px-4 py-2 text-sm font-bold text-[#18594b] hover:bg-[#e4efe8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#217161]">
+            <a href="{{ route('items.index') }}" class="rounded-full border border-[#b9cec3] bg-white px-4 py-2 text-sm font-bold text-brand hover:bg-[#e4efe8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus">
                 كل البلاغات
             </a>
         </div>
@@ -147,16 +147,16 @@
             @forelse($categories as $category)
                 <li>
                     <a href="{{ route('items.index', ['category' => $category->id]) }}"
-                       class="group flex h-full min-h-14 items-center gap-2 rounded-xl border border-[#dddcd1] bg-[#fffefa] px-2.5 py-2 text-sm font-bold text-[#193d35] transition-colors hover:border-[#80a999] hover:bg-[#f5faf6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#217161]">
-                        <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-[#e4efe8] text-[#276454] transition-colors group-hover:bg-[#153e35] group-hover:text-white" aria-hidden="true">
+                       class="group flex h-full min-h-14 items-center gap-2 rounded-xl border border-[#dddcd1] bg-[#fffefa] px-2.5 py-2 text-sm font-bold text-brand-ink transition-colors hover:border-[#80a999] hover:bg-[#f5faf6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus">
+                        <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-[#e4efe8] text-[#276454] transition-colors group-hover:bg-brand group-hover:text-white" aria-hidden="true">
                             <i class="fa-solid {{ $category->icon ?? 'fa-box' }}"></i>
                         </span>
                         <span class="min-w-0 flex-1">{{ $category->name }}</span>
-                        <span class="shrink-0 rounded-full bg-[#f0f1eb] px-1.5 py-0.5 text-xs tabular-nums text-[#53675f]" aria-label="{{ $category->items_count }} بلاغ">{{ $category->items_count }}</span>
+                        <span class="shrink-0 rounded-full bg-[#f0f1eb] px-1.5 py-0.5 text-xs tabular-nums text-brand-muted" aria-label="{{ $category->items_count }} بلاغ">{{ $category->items_count }}</span>
                     </a>
                 </li>
             @empty
-                <li class="col-span-full rounded-xl border border-dashed border-[#b9cec3] p-4 text-sm text-[#53675f]">ما في فئات متاحة حاليًا.</li>
+                <li class="col-span-full rounded-xl border border-dashed border-[#b9cec3] p-4 text-sm text-brand-muted">ما في فئات متاحة حاليًا.</li>
             @endforelse
         </ul>
     </div>
@@ -179,15 +179,15 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-8">
         <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
-                <h2 id="browse-reports-title" class="text-3xl font-extrabold text-[#153e35] sm:text-4xl">تصفّح البلاغات</h2>
-                <p class="mt-2 text-sm text-[#53675f]">شوف الأغراض المفقودة والموجودة، وافتح أي بلاغ لتعرف تفاصيله.</p>
+                <h2 id="browse-reports-title" class="text-3xl font-extrabold text-brand sm:text-4xl">تصفّح البلاغات</h2>
+                <p class="mt-2 text-sm text-brand-muted">شوف الأغراض المفقودة والموجودة، وافتح أي بلاغ لتعرف تفاصيله.</p>
             </div>
             <nav aria-label="تصفية البلاغات حسب النوع" class="flex flex-wrap gap-1 rounded-2xl border border-[#dfdfd3] bg-[#eeefe6] p-1">
                 @foreach($reportTabs as $type => $label)
                     <a href="{{ route('home', $type === 'all' ? [] : ['reports' => $type]) }}#browse-reports"
                        @if($selectedType === $type) aria-current="true" @endif
-                       @class(['rounded-xl px-3 py-2.5 text-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#217161]',
-                           'bg-[#153e35] text-white shadow-sm' => $selectedType === $type,
+                       @class(['rounded-xl px-3 py-2.5 text-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus',
+                           'bg-brand text-white shadow-sm' => $selectedType === $type,
                            'text-[#275347] hover:bg-white' => $selectedType !== $type])>{{ $label }}</a>
                 @endforeach
             </nav>
@@ -202,13 +202,13 @@
         @else
             <div class="rounded-2xl border border-dashed border-[#adc4b8] bg-[#fffefa] p-8 text-center">
                 <i class="fa-solid fa-box-open text-xl text-[#276454]" aria-hidden="true"></i>
-                <p class="mt-3 font-bold text-[#153e35]">لسّا ما في بلاغات بهالقسم.</p>
-                <a href="{{ route('items.create', $selectedType === 'all' ? [] : ['type' => $selectedType]) }}" class="mt-3 inline-block text-sm font-bold text-[#18594b] underline">انشر بلاغ</a>
+                <p class="mt-3 font-bold text-brand">لسّا ما في بلاغات بهالقسم.</p>
+                <a href="{{ route('items.create', $selectedType === 'all' ? [] : ['type' => $selectedType]) }}" class="mt-3 inline-block text-sm font-bold text-brand underline">انشر بلاغ</a>
             </div>
         @endif
 
         <div class="mt-7 flex justify-center">
-            <a href="{{ $browseUrl }}" class="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#b9cec3] bg-[#fffefa] px-5 text-sm font-bold text-[#18594b] hover:bg-[#e4efe8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#217161]">
+            <a href="{{ $browseUrl }}" class="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#b9cec3] bg-[#fffefa] px-5 text-sm font-bold text-brand hover:bg-[#e4efe8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus">
                 {{ match ($selectedType) { 'lost' => 'عرض كل المفقودات', 'found' => 'عرض كل الموجودات', default => 'عرض كل البلاغات' } }}
                 <i class="fa-solid fa-arrow-left rtl:rotate-0 ltr:rotate-180" aria-hidden="true"></i>
             </a>
@@ -219,7 +219,7 @@
 {{-- How it works --}}
 <section aria-labelledby="home-guide-title" class="pb-12 sm:pb-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-8">
-        <div class="rounded-3xl border border-[#315849] bg-[#153e35] p-5 text-white sm:p-9">
+        <div class="rounded-3xl border border-[#315849] bg-brand p-5 text-white sm:p-9">
             <h2 id="home-guide-title" class="text-2xl font-extrabold sm:text-3xl">كيف بتشتغل لُقيا الشام؟</h2>
             <ol class="mt-5 grid gap-3 md:grid-cols-3">
                 @foreach([
@@ -228,7 +228,7 @@
                     ['fa-handshake', 'اتفقوا على التسليم', 'اختاروا مكان عام ومناسب ليرجع الغرض لصاحبه.'],
                 ] as [$icon, $title, $description])
                     <li class="rounded-2xl border border-white/15 bg-white/5 p-4">
-                        <span class="grid size-10 place-items-center rounded-xl bg-[#f2e2be] text-[#153e35]" aria-hidden="true">
+                        <span class="grid size-10 place-items-center rounded-xl bg-[#f2e2be] text-brand" aria-hidden="true">
                             <i class="fa-solid {{ $icon }}"></i>
                         </span>
                         <h3 class="mt-3 font-extrabold">{{ $title }}</h3>
@@ -244,19 +244,19 @@
 <section aria-labelledby="home-cta-title" class="border-t border-[#e3dfd0] bg-[#eeeade]">
     <div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-9 sm:px-8 sm:py-12 lg:flex-row lg:items-center lg:justify-between">
         <div class="flex items-start gap-4">
-            <span class="hidden size-14 shrink-0 place-items-center rounded-2xl border border-[#d9ccac] bg-[#f9f4e7] text-xl text-[#18594b] sm:grid" aria-hidden="true">
+            <span class="hidden size-14 shrink-0 place-items-center rounded-2xl border border-[#d9ccac] bg-[#f9f4e7] text-xl text-brand sm:grid" aria-hidden="true">
                 <i class="fa-solid fa-hand-holding-heart"></i>
             </span>
             <div>
-                <h2 id="home-cta-title" class="text-2xl font-extrabold text-[#153e35] sm:text-3xl">ضاع منك غرض أو لقيت شي؟</h2>
-                <p class="mt-2 max-w-xl text-sm leading-7 text-[#53675f]">أضف بلاغًا بالوصف والمنطقة لتسهّل على الناس التعرّف على الغرض.</p>
+                <h2 id="home-cta-title" class="text-2xl font-extrabold text-brand sm:text-3xl">ضاع منك غرض أو لقيت شي؟</h2>
+                <p class="mt-2 max-w-xl text-sm leading-7 text-brand-muted">أضف بلاغًا بالوصف والمنطقة لتسهّل على الناس التعرّف على الغرض.</p>
             </div>
         </div>
         <div class="flex shrink-0 flex-wrap gap-2.5">
-            <a href="{{ route('items.create') }}" class="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#153e35] px-5 text-sm font-bold text-white hover:bg-[#22594b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#217161]">
+            <a href="{{ route('items.create') }}" class="inline-flex min-h-11 items-center gap-2 rounded-full bg-brand px-5 text-sm font-bold text-white hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus">
                 <i class="fa-solid fa-plus" aria-hidden="true"></i> نشر بلاغ
             </a>
-            <a href="{{ route('items.index') }}" class="inline-flex min-h-11 items-center rounded-full border border-[#a9b8aa] bg-[#fffefa] px-5 text-sm font-bold text-[#18594b] hover:bg-[#e4efe8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#217161]">
+            <a href="{{ route('items.index') }}" class="inline-flex min-h-11 items-center rounded-full border border-[#a9b8aa] bg-[#fffefa] px-5 text-sm font-bold text-brand hover:bg-[#e4efe8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus">
                 تصفّح البلاغات
             </a>
         </div>

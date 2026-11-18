@@ -1,13 +1,13 @@
 @props(['item', 'showEventDate' => false])
 
 <a href="{{ route('items.show', $item) }}"
-   class="group block overflow-hidden rounded-2xl border border-slate-200 bg-white transition duration-200 hover:-translate-y-1 hover:border-teal-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2">
+   class="site-item-card group block overflow-hidden rounded-2xl border border-slate-200 bg-white transition duration-200 hover:-translate-y-1 hover:border-teal-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2">
 
     <div class="relative aspect-[4/3] overflow-hidden bg-stone-100">
         @if($item->images->isNotEmpty())
             <img src="{{ asset('storage/' . $item->images->first()->path) }}"
                  alt="{{ $item->title }}"
-                 loading="lazy"
+                 loading="lazy" width="640" height="480"
                  class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]">
         @else
             <div class="flex h-full items-center justify-center text-stone-400">

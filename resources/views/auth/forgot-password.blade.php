@@ -3,7 +3,7 @@
 @section('title', 'نسيت كلمة المرور')
 
 @section('content')
-    <h2 class="text-2xl font-bold text-gray-900 mb-2">نسيت كلمة المرور؟</h2>
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">نسيت كلمة المرور؟</h1>
     <p class="text-gray-500 text-sm mb-6">أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين</p>
 
     @if(session('status'))
@@ -21,8 +21,8 @@
     <form method="POST" action="{{ route('password.email') }}" class="space-y-4">
         @csrf
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
-            <input type="email" name="email" value="{{ old('email') }}" required autofocus
+            <label for="recovery-email" class="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
+            <input id="recovery-email" autocomplete="email" dir="ltr" type="email" name="email" value="{{ old('email') }}" required
                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
                    placeholder="you@example.com">
         </div>

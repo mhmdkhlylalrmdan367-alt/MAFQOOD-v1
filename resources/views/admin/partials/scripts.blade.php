@@ -1,5 +1,7 @@
 <script>
 (() => {
+    const errors = document.querySelector('[data-admin-errors]');
+    if (errors) errors.focus();
     const button = document.querySelector('[data-admin-menu]');
     const nav = document.querySelector('.admin-nav');
     const mobile = matchMedia('(max-width: 600px)');

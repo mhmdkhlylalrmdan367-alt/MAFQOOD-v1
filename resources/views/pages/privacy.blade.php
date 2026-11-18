@@ -11,7 +11,7 @@
 </div>
 
 <div class="max-w-4xl mx-auto px-4 py-12">
-    <div class="bg-white rounded-xl shadow-sm p-8 space-y-6 text-gray-700 leading-relaxed">
+    <div class="site-surface bg-white rounded-xl shadow-sm p-8 space-y-6 text-gray-700 leading-relaxed">
         <section>
             <h2 class="text-xl font-bold text-gray-900 mb-3">1. المعلومات التي نجمعها</h2>
             <p>عند تسجيلك، نجمع: الاسم، البريد الإلكتروني، رقم الهاتف (اختياري)، المنطقة (اختياري)، الصورة الشخصية (اختياري).</p>

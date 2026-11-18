@@ -1,123 +1,74 @@
 @extends('layouts.app')
-
 @section('title', 'الملف الشخصي')
 
 @section('content')
-
 <div class="bg-primary-600 text-white py-10">
-    <div class="max-w-3xl mx-auto px-4">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <h1 class="text-3xl font-bold">الملف الشخصي</h1>
-        <p class="text-white/80 mt-1">إدارة بياناتك الشخصية</p>
+        <p class="text-white/80 mt-1">بياناتك الشخصية وأمان حسابك، في مكان واحد.</p>
     </div>
 </div>
 
-<div class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+<div class="profile-page max-w-6xl mx-auto px-4 sm:px-6 py-8">
+    @if($errors->any())
+        <div role="alert" tabindex="-1" data-site-errors class="profile-error-summary">
+            <strong>تعذّر حفظ التغييرات. راجع الحقول التالية:</strong>
+            <ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+        </div>
+    @endif
 
-    {{-- Profile info --}}
-    <div class="bg-white rounded-xl shadow-sm p-6">
-        <h2 class="text-xl font-bold mb-4">البيانات الشخصية</h2>
+    <div class="profile-sections">
+        <section class="profile-card site-surface" aria-labelledby="profile-details-title">
+            <header class="profile-section-header">
+                <span class="profile-section-icon" aria-hidden="true"><i class="fa-regular fa-user"></i></span>
+                <div><h2 id="profile-details-title">البيانات الشخصية</h2><p>حدّث اسمك وصورتك ومعلومات التواصل.</p></div>
+            </header>
 
-        @if(session('success'))
-            <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-sm">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm">
-                <ul class="list-disc list-inside space-y-1">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-4">
-            @csrf @method('PUT')
-
-            <div class="flex items-center gap-4">
-                <img src="{{ auth()->user()->avatarUrl() }}" class="w-20 h-20 rounded-full object-cover" alt="">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">تغيير الصورة</label>
-                    <input type="file" name="avatar" accept="image/*"
-                           class="text-sm border border-gray-300 rounded-lg px-3 py-1.5">
+            <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="profile-form">
+                @csrf @method('PUT')
+                <div class="profile-avatar-editor">
+                    @if(auth()->user()->avatar)
+                        <img src="{{ auth()->user()->avatarUrl() }}" width="76" height="76" class="profile-avatar" alt="صورتك الشخصية">
+                    @else
+                        <span class="profile-avatar profile-avatar-initial" aria-hidden="true">{{ mb_substr(auth()->user()->name, 0, 1) }}</span>
+                    @endif
+                    <x-form.field name="avatar" label="الصورة الشخصية" type="file" accept="image/*" hint="صورة بحد أقصى 2 ميغابايت. اختيارية." data-site-upload />
                 </div>
-            </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">الاسم *</label>
-                <input type="text" name="name" value="{{ old('name', auth()->user()->name) }}" required
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
-                <input type="email" value="{{ auth()->user()->email }}" disabled
-                       class="w-full border border-gray-200 bg-gray-50 rounded-lg px-4 py-2.5 text-gray-500">
-                <p class="text-xs text-gray-400 mt-1">لا يمكن تغيير البريد الإلكتروني حاليًا</p>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
-                <input type="text" name="phone" value="{{ old('phone', auth()->user()->phone) }}"
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">المنطقة</label>
-                <select name="region_id" class="w-full border border-gray-300 rounded-lg px-3 py-2.5">
+                <x-form.field name="name" label="الاسم الكامل" :value="auth()->user()->name" autocomplete="name" maxlength="255" required />
+                <x-form.field name="email" label="البريد الإلكتروني" type="email" :value="auth()->user()->email" dir="ltr" hint="البريد المرتبط بالحساب. لا يمكن تغييره حالياً." disabled />
+                <x-form.field name="phone" label="رقم الهاتف" type="tel" :value="auth()->user()->phone" autocomplete="tel" maxlength="20" dir="ltr" placeholder="+963 …" />
+                <x-form.field name="region_id" label="المنطقة" type="select">
                     <option value="">اختر المنطقة</option>
                     @foreach($regions as $region)
-                        <option value="{{ $region->id }}" {{ old('region_id', auth()->user()->region_id) == $region->id ? 'selected' : '' }}>
-                            {{ $region->name }}
-                        </option>
+                        <option value="{{ $region->id }}" @selected(old('region_id', auth()->user()->region_id) == $region->id)>{{ $region->name }}</option>
                     @endforeach
-                </select>
-            </div>
+                </x-form.field>
 
-            <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-semibold px-6 py-2.5 rounded-lg transition">
-                <i class="fa-solid fa-check ml-2"></i> حفظ التغييرات
-            </button>
-        </form>
-    </div>
+                <footer class="profile-form-footer">
+                    <span>احفظ التغييرات بعد الانتهاء.</span>
+                    <button type="submit" class="profile-save-button"><i class="fa-solid fa-check" aria-hidden="true"></i> حفظ البيانات</button>
+                </footer>
+            </form>
+        </section>
 
-    {{-- Change password --}}
-    <div class="bg-white rounded-xl shadow-sm p-6">
-        <h2 class="text-xl font-bold mb-4">تغيير كلمة المرور</h2>
+        <section class="profile-card site-surface" aria-labelledby="profile-security-title">
+            <header class="profile-section-header">
+                <span class="profile-section-icon profile-section-icon-gold" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
+                <div><h2 id="profile-security-title">أمان الحساب</h2><p>غيّر كلمة المرور للحفاظ على أمان حسابك.</p></div>
+            </header>
 
-        @if(session('password_success'))
-            <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-sm">
-                {{ session('password_success') }}
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('profile.password') }}" class="space-y-4">
-            @csrf @method('PUT')
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور الحالية *</label>
-                <input type="password" name="current_password" required
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور الجديدة *</label>
-                <input type="password" name="password" required
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 outline-none">
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">تأكيد كلمة المرور *</label>
-                <input type="password" name="password_confirmation" required
-                       class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-500 outline-none">
-            </div>
-
-            <button type="submit" class="bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-2.5 rounded-lg transition">
-                <i class="fa-solid fa-lock ml-2"></i> تغيير كلمة المرور
-            </button>
-        </form>
+            <form method="POST" action="{{ route('profile.password') }}" class="profile-form">
+                @csrf @method('PUT')
+                <x-form.field name="current_password" label="كلمة المرور الحالية" type="password" autocomplete="current-password" required />
+                <x-form.field name="password" label="كلمة المرور الجديدة" type="password" autocomplete="new-password" minlength="8" hint="استخدم 8 أحرف على الأقل، واختر كلمة مختلفة عن الحالية." required />
+                <x-form.field name="password_confirmation" label="تأكيد كلمة المرور الجديدة" type="password" autocomplete="new-password" minlength="8" required />
+                <div class="profile-security-note"><i class="fa-solid fa-lock" aria-hidden="true"></i><p>لا تشارك كلمة مرورك مع أي شخص، ولا تستخدم كلمة المرور نفسها في أكثر من موقع.</p></div>
+                <footer class="profile-form-footer">
+                    <button type="submit" class="profile-save-button profile-save-button-gold"><i class="fa-solid fa-key" aria-hidden="true"></i> تحديث كلمة المرور</button>
+                </footer>
+            </form>
+        </section>
     </div>
 </div>
-
 @endsection
