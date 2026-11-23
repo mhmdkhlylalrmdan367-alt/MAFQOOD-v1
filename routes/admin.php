@@ -9,22 +9,23 @@ use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/admin/login', function () {
-    if (auth()->check() && auth()->user()->isAdmin()) {
-        return redirect()->route('admin.dashboard');
-    }
-    return view('auth.admin-login');
-})->name('admin.login');
+// Route::get('/admin/login', function () {
+//     if (auth()->check() && auth()->user()->isAdmin()) {
+//         return redirect()->route('admin.dashboard');
+//     }
+//     return view('auth.admin-login');
+// })->name('admin.login');
 
 Route::post('/admin/login', [\Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'store'])
     ->middleware('throttle:login')->name('admin.login.store');
 
-Route::middleware(['admin'])
-    ->prefix('admin')
+
+Route::middleware(['auth:admin'])
+    ->prefix('/admin')
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/site-reports', [SiteReportController::class, 'index'])->name('site-reports.index');
         Route::get('/site-reports/export', [SiteReportController::class, 'export'])->name('site-reports.export');

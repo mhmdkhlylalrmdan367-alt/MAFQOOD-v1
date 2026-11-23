@@ -54,7 +54,7 @@ class SearchController extends Controller
         $categories = Category::active()->orderBy('sort_order')->get();
         $regions = Region::where('is_active', true)->orderBy('name_ar')->get();
 
-        return view('search.index', compact('items', 'categories', 'regions', 'filters', 'q'))
+        return view('front.search.index', compact('items', 'categories', 'regions', 'filters', 'q'))
             ->with('filterErrors', $validator->errors());
     }
 }

@@ -23,13 +23,13 @@ class ReportController extends Controller
 
         $reports = $query->paginate(20)->withQueryString();
 
-        return view('admin.reports', compact('reports'));
+        return view('admin.reports.reports', compact('reports'));
     }
 
     public function show(Report $report)
     {
         $report->load(['user', 'reportable', 'reviewer']);
-        return view('admin.reports-show', compact('report'));
+        return view('admin.reports.show', compact('report'));
     }
 
     public function update(Request $request, Report $report)

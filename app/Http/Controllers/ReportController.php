@@ -11,7 +11,7 @@ class ReportController extends Controller
 {
     public function create(Item $item)
     {
-        return view('reports.create', compact('item'));
+        return view('front.reports.create', compact('item'));
     }
 
     public function store(Request $request, Item $item)

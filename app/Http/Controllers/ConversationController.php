@@ -30,7 +30,7 @@ class ConversationController extends Controller
             ->withCount(['messages as unread_count' => fn ($messages) => $messages->where('sender_id', '!=', $userId)->whereNull('read_at')])
             ->orderByDesc('last_message_at')->orderByDesc('id')->paginate(20)->appends($filters);
 
-        return view('conversations.index', compact('conversations', 'q'));
+        return view('front.conversations.index', compact('conversations', 'q'));
     }
 
 
@@ -85,7 +85,7 @@ class ConversationController extends Controller
 
     \Log::info('=== Conversation Show: PASSED authorize ===');
 
-     
+
 
         $conversation->messages()
             ->where('sender_id', '!=', Auth::id())
@@ -102,10 +102,10 @@ class ConversationController extends Controller
 
         if (request()->expectsJson()) {
             return response()->json([
-                'html' => view('conversations.messages', compact('messages', 'other'))->render(),
+                'html' => view('front.conversations.messages', compact('messages', 'other'))->render(),
             ])->header('Cache-Control', 'no-store');
         }
 
-        return view('conversations.show', compact('conversation', 'messages'));
+        return view('front.conversations.show', compact('conversation', 'messages'));
     }
 }

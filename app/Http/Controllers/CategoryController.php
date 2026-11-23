@@ -12,7 +12,7 @@ class CategoryController extends Controller
         $categories = Category::active()
             ->withCount(['items' => fn ($q) => $q->where('status', 'active')])
             ->get();
-        return view('categories.index', compact('categories'));
+        return view('front.categories.index', compact('categories'));
     }
 
     public function show(Category $category)
@@ -22,6 +22,6 @@ class CategoryController extends Controller
             ->where('category_id', $category->id)
             ->with(['images', 'region'])
             ->latest()->paginate(12);
-        return view('categories.show', compact('category', 'items'));
+        return view('front.categories.show', compact('category', 'items'));
     }
 }

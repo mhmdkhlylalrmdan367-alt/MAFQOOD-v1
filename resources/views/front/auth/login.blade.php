@@ -3,14 +3,14 @@
 @section('content')
 <div class="signup-intro">
     <span class="signup-symbol" aria-hidden="true"><i class="fa-solid fa-door-open"></i></span>
-    <h1>دخول إدارة لُقيا الشام</h1>
-    <p>أدخل بيانات حساب المدير للوصول إلى إدارة المنصة.</p>
+    <h1>نورت لُقيا الشام.</h1>
+    <p>سجّل دخولك لتتابع بلاغاتك ورسائلك.</p>
 </div>
 @if($errors->any())
     <div id="login-error" role="alert" class="signup-error-summary">{{ $errors->first() }}</div>
 @endif
 
-<form method="POST" action="{{ route('admin.login.store') }}" class="signup-form">
+<form method="POST" action="{{ route('login') }}" class="signup-form">
     @csrf
     <div>
         <label for="login-email">البريد الإلكتروني</label>
@@ -43,7 +43,10 @@
         تسجيل الدخول <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
     </button>
 
-
+    <div class="login-register">
+        <p>أول مرة معنا؟</p>
+        <a href="{{ route('register') }}">أنشئ حسابك <i class="fa-solid fa-arrow-left" aria-hidden="true"></i></a>
+    </div>
     <a href="{{ route('home') }}" class="login-home">العودة للرئيسية</a>
 </form>
 @endsection

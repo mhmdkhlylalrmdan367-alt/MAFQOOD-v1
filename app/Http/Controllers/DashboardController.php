@@ -29,6 +29,6 @@ class DashboardController extends Controller
             ->where(fn ($query) => $query->where('sender_id', $user->id)->orWhere('receiver_id', $user->id))
             ->with(['sender', 'receiver', 'latestMessage'])->orderByDesc('last_message_at')->limit(3)->get();
 
-        return view('dashboard.index', compact('stats', 'items', 'conversations'));
+        return view('front.dashboard.index', compact('stats', 'items', 'conversations'));
     }
 }

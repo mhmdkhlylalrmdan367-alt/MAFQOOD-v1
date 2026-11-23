@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('phone', 20)->nullable();
             $table->foreignId('region_id')->nullable()->constrained()->nullOnDelete();
             $table->string('avatar')->nullable();
-            $table->foreignId('role_id')->default(2)->constrained()->restrictOnDelete();
+            $table->foreignId('role_id')->default(2)->constrained()->restrictOnDelete(); // rubbish
             $table->boolean('is_active')->default(true);
             $table->string('locale', 5)->default('ar');
             $table->rememberToken();

@@ -28,13 +28,13 @@ class UserController extends Controller
         $users = $query->paginate(20)->withQueryString();
         $roles = Role::all();
 
-        return view('admin.users', compact('users', 'roles'));
+        return view('admin.users.users', compact('users', 'roles'));
     }
 
     public function edit(User $user)
     {
         $roles = Role::all();
-        return view('admin.users-edit', compact('user', 'roles'));
+        return view('admin.users.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)

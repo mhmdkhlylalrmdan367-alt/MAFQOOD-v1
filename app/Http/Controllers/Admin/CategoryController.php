@@ -12,12 +12,12 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::withCount('items')->orderBy('sort_order')->paginate(20);
-        return view('admin.categories', compact('categories'));
+        return view('admin.categories.categories', compact('categories'));
     }
 
     public function create()
     {
-        return view('admin.categories-create');
+        return view('admin.categories.create');
     }
 
     public function store(Request $request)
@@ -41,7 +41,7 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        return view('admin.categories-edit', compact('category'));
+        return view('admin.categories.edit', compact('category'));
     }
 
     public function update(Request $request, Category $category)

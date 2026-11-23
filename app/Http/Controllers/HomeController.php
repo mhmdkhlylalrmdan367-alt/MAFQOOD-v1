@@ -28,6 +28,6 @@ class HomeController extends Controller
             'resolved' => Item::where('status', 'resolved')->count(),
         ];
 
-        return view('home.index', compact('latestLost', 'latestFound', 'categories', 'stats'));
+        return view('front.home.index', compact('latestLost', 'latestFound', 'categories', 'stats'));
     }
 }

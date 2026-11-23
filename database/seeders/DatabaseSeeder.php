@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             CountryRegionSeeder::class,
             CategorySeeder::class,
-            AdminUserSeeder::class,
+            AdminSeeder::class,
         ]);
     }
 }

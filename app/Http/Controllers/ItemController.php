@@ -30,7 +30,7 @@ class ItemController extends Controller
         $categories = Category::active()->get();
         $regions = Region::where('is_active', true)->get();
 
-        return view('items.index', compact('items', 'categories', 'regions'));
+        return view('front.items.index', compact('items', 'categories', 'regions'));
     }
 
     public function show(Item $item)
@@ -44,14 +44,14 @@ class ItemController extends Controller
             ->where('id', '!=', $item->id)
             ->latest()->take(4)->get();
 
-        return view('items.show', compact('item', 'related'));
+        return view('front.items.show', compact('item', 'related'));
     }
 
     public function create()
     {
         $categories = Category::active()->get();
         $regions = Region::where('is_active', true)->get();
-        return view('items.create', compact('categories', 'regions'));
+        return view('front.items.create', compact('categories', 'regions'));
     }
 
     public function store(ItemRequest $request)
@@ -82,7 +82,7 @@ class ItemController extends Controller
         $categories = Category::active()->get();
         $regions = Region::where('is_active', true)->get();
         $item->load('images');
-        return view('items.edit', compact('item', 'categories', 'regions'));
+        return view('front.items.edit', compact('item', 'categories', 'regions'));
     }
 
     public function update(ItemRequest $request, Item $item)

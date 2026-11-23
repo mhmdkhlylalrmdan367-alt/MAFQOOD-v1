@@ -13,7 +13,7 @@ class ProfileController extends Controller
     public function edit()
     {
         $regions = Region::where('is_active', true)->get();
-        return view('profile.edit', compact('regions'));
+        return view('front.profile.edit', compact('regions'));
     }
 
     public function update(Request $request)

@@ -32,19 +32,19 @@ class ItemController extends Controller
         $items = $query->paginate(20)->withQueryString();
         $categories = Category::all();
 
-        return view('admin.items', compact('items', 'categories'));
+        return view('admin.items.items', compact('items', 'categories'));
     }
 
     public function show(Item $item)
     {
         $item->load(['user', 'category', 'region', 'images', 'reports']);
-        return view('admin.items-show', compact('item'));
+        return view('admin.items.show', compact('item'));
     }
 
     public function edit(Item $item)
     {
         $categories = Category::all();
-        return view('admin.items-edit', compact('item', 'categories'));
+        return view('admin.items.edit', compact('item', 'categories'));
     }
 
     public function update(Request $request, Item $item)
