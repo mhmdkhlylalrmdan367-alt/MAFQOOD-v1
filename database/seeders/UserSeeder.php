@@ -15,15 +15,12 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        $adminRole = Role::where('name', 'admin')->first();
         User::updateOrCreate(
             ['email' => 'admin@mafqood.com'],
             [
                 'name' => 'مستخدم تجريبي',
                 'password' => Hash::make('admin1234'),
                 'phone' => '+963999999999',
-                'role_id' => $adminRole->id,
                 'is_active' => true,
                 'email_verified_at' => now(),
                 'locale' => 'ar',

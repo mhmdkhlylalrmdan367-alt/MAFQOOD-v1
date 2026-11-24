@@ -18,6 +18,12 @@ class AdminSeeder extends Seeder
             'password' => Hash::make('123456789'),
             'super_admin' => true, // 1 // 0
         ]);
+          Admin::create([
+            'name' => 'Second Admin',
+            'email' => 'secondadmin@gmail.com',
+            'password' => Hash::make('123456789'),
+            'super_admin' => false, // 1 // 0
+        ]);
 
 
     }

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Config;
 
 class User extends Authenticatable
 {
@@ -15,7 +16,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'email', 'password', 'phone', 'region_id',
-        'avatar', 'role_id', 'is_active', 'locale',
+        'avatar', 'is_active', 'locale',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -29,10 +30,10 @@ class User extends Authenticatable
         ];
     }
 
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class);
-    }
+    // public function role(): BelongsTo
+    // {
+    //     return $this->belongsTo(Role::class);
+    // }
 
     public function region(): BelongsTo
     {
@@ -56,18 +57,18 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role?->name === 'admin';
+        return Config::get('fortify.guard') == 'admin'?true : false;
     }
 
-    public function isModerator(): bool
-    {
-        return in_array($this->role?->name, ['admin', 'moderator']);
-    }
+    // public function isModerator(): bool
+    // {
+    //     return in_array($this->role?->name, ['admin', 'moderator']);
+    // }
 
-    public function hasPermission(string $permission): bool
-    {
-        return $this->role?->permissions()->where('name', $permission)->exists() ?? false;
-    }
+    // public function hasPermission(string $permission): bool
+    // {
+    //     return $this->role?->permissions()->where('name', $permission)->exists() ?? false;
+    // }
 
     public function avatarUrl(): string
     {
@@ -76,13 +77,13 @@ class User extends Authenticatable
             : 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=2563eb&color=fff';
     }
 
-    public function assignRole(string $roleName): void
-    {
-        $role = Role::where('name', $roleName)->first();
-        if ($role) {
-            $this->update(['role_id' => $role->id]);
-        }
-    }
+    // public function assignRole(string $roleName): void
+    // {
+    //     $role = Role::where('name', $roleName)->first();
+    //     if ($role) {
+    //         $this->update(['role_id' => $role->id]);
+    //     }
+    // }
 
     public function updateProfilePhoto($photo): void
     {

@@ -1,0 +1,67 @@
+<?php
+return [
+//[$route, $pattern, $icon, $label, $description]
+                [
+                   'route'=> 'admin.dashboard',
+                    'pattern' => 'admin.dashboard',
+                    'icon' => 'fa-chart-pie',
+                    'label' => 'نظرة عامة',
+                    'description' => 'متابعة أداء المنصة',
+                ],
+                [
+                    'route' => 'admin.site-reports.index',
+                    'pattern' => 'admin.site-reports.*',
+                    'icon' => 'fa-chart-column',
+                    'label' => 'تقارير الموقع',
+                    'description' => 'الإحصاءات وتصدير Excel',
+                    'ability' => 'sitereports.view',
+                ],
+                [
+                    'route' => 'admin.users.index',
+                    'pattern' => 'admin.users.*',
+                    'icon' => 'fa-users',
+                    'label' => 'المستخدمون',
+                    'description' => 'الحسابات والصلاحيات',
+                    'ability' => 'users.view',
+                ],
+                [
+                    'route' => 'admin.items.index',
+                    'pattern' => 'admin.items.*',
+                    'icon' => 'fa-box-open',
+                    'label' => 'الإعلانات',
+                    'description' => 'المفقودات والموجودات',
+                    'ability' => 'items.view',
+                ],
+                [
+                    'route' => 'admin.categories.index',
+                    'pattern' => 'admin.categories.*',
+                    'icon' => 'fa-layer-group',
+                    'label' => 'التصنيفات',
+                    'description' => 'تنظيم محتوى المنصة',
+                    'ability' => 'categories.view',
+                ],
+                [
+                    'route' => 'admin.reports.index',
+                    'pattern' => 'admin.reports.*',
+                    'icon' => 'fa-shield-halved',
+                    'label' => 'البلاغات',
+                    'description' => 'المراجعة وحماية المجتمع',
+                    'ability' => 'reports.view',
+                ],
+                [
+                    'route' => 'role-permession.roles.index',
+                    'pattern' => 'role-permession.roles.*',
+                    'icon' => 'fa-shield',
+                    'label' => 'الأدوار والصلاحيات',
+                    'description' => 'إدارة صلاحيات المشرفين',
+                    'ability' => 'roles.view',
+                ],
+                [
+                    'route' => 'admin.admins.index',
+                    'pattern' => 'admin.admins.*',
+                    'icon' => 'fa-user-shield',
+                    'label' => 'المشرفون',
+                    'description' => 'إدارة مشرفو المنصة',
+                    'ability' => 'admins.view',
+                ],
+];

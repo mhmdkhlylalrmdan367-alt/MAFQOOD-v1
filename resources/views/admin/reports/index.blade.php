@@ -5,6 +5,7 @@
 @section('description', 'راجع البلاغات وتفاصيلها قبل اتخاذ الإجراء المناسب.')
 
 @section('content')
+<x-flash-message/>
 <div class="admin-resource-intro"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><strong>مجتمع آمن يبدأ بالمراجعة</strong><p>راجع البلاغات وتفاصيلها قبل اتخاذ الإجراء المناسب.</p></div></div>
 
 <div class="admin-filter-panel bg-white rounded-xl shadow-sm p-4 mb-4">

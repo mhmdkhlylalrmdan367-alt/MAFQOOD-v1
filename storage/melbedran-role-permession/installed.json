@@ -1,0 +1,13 @@
+{
+    "package": "melbedran/role-permession",
+    "name": "Melbedran-Role-permession",
+    "installed_at": "2026-11-23T18:02:26+03:00",
+    "published": {
+        "config": "C:\\Users\\HD\\MAFQOOD-v1\\MAFQOOD-v1\\config\\role-permession.php",
+        "routes": "C:\\Users\\HD\\MAFQOOD-v1\\MAFQOOD-v1\\routes/role-permession.php",
+        "controllers": "C:\\Users\\HD\\MAFQOOD-v1\\MAFQOOD-v1\\app\\Http/Controllers/RolePermession",
+        "js": "C:\\Users\\HD\\MAFQOOD-v1\\MAFQOOD-v1\\resources\\js/vendor/melbedran-role-permession",
+        "views": "C:\\Users\\HD\\MAFQOOD-v1\\MAFQOOD-v1\\resources\\views/vendor/role-permession",
+        "migrations_tag": "role-permession-migrations"
+    }
+}

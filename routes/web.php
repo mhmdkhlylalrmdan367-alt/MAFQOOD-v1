@@ -77,3 +77,4 @@ Route::middleware(['auth'])->group(function () {
 });
 
 return require __DIR__ . '/admin.php';
+return require __DIR__ . '/role-permession.php';

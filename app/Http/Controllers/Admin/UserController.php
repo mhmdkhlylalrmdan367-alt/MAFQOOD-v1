@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::with('role')->latest();
+        Gate::authorize('users.view');
+        $query = User::orderBy('name', 'asc');
 
         if ($search = $request->input('q')) {
             $query->where(function ($q) use ($search) {
@@ -21,20 +22,20 @@ class UserController extends Controller
             });
         }
 
-        if ($roleId = $request->input('role')) {
-            $query->where('role_id', $roleId);
-        }
+        // if ($roleId = $request->input('role')) {
+        //     $query->where('role_id', $roleId);
+        // }
 
         $users = $query->paginate(20)->withQueryString();
-        $roles = Role::all();
 
-        return view('admin.users.users', compact('users', 'roles'));
+
+        return view('admin.users.index', compact('users'));
     }
 
     public function edit(User $user)
     {
-        $roles = Role::all();
-        return view('admin.users.edit', compact('user', 'roles'));
+        Gate::authorize('users.update');
+        return view('admin.users.edit', compact('user'));
     }
 
     public function update(Request $request, User $user)
@@ -55,6 +56,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        Gate::authorize('users.delete');
         if ($user->id === auth()->id()) {
             return back()->with('error', 'لا يمكنك حذف حسابك الشخصي');
         }

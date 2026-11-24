@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SiteReportController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AdminsController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -25,6 +26,7 @@ Route::middleware(['auth:admin'])
     ->name('admin.')
     ->group(function () {
 
+    Route::resource('admins', AdminsController::class);
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::get('/site-reports', [SiteReportController::class, 'index'])->name('site-reports.index');

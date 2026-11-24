@@ -9,8 +9,10 @@
         "php": "^8.3",
         "laravel/fortify": "^1.42",
         "laravel/framework": "^13.17",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "melbedran/role-permession": "1.2"
     },
+
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.5",
@@ -84,9 +86,15 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "repositories": [{
-        "name": "melbedran-role-permession",
-        "type": "vcs",
-        "url": "https://github.com/muhammed-bedran/Melbedran-Role-permession.git"
-    }]
-}
+   "repositories": [
+    {
+        "type": "path",
+        "url": "packages/Melbedran/RolePermession",
+        "options": {
+            "symlink": false,
+            "versions": {
+                "melbedran/role-permession": "1.2.0"
+            }
+        }
+    }
+]}

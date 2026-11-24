@@ -5,6 +5,7 @@
 @section('description', 'راجع المفقودات والموجودات وتابع حالتها ومعلومات أصحابها.')
 
 @section('content')
+<x-flash-message/>
 <div class="admin-resource-intro"><i class="fa-solid fa-box-open" aria-hidden="true"></i><div><strong>كل أمانة في مكانها</strong><p>راجع المفقودات والموجودات وتابع حالتها ومعلومات أصحابها.</p></div></div>
 
 <div class="admin-filter-panel bg-white rounded-xl shadow-sm p-4 mb-4">
@@ -86,18 +87,24 @@
                     <td class="py-3 px-4 text-xs">{{ $item->user->name }}</td>
                     <td class="py-3 px-4">
                         <div class="flex items-center gap-2">
+                            @canAbility('items.edit')
                             <a aria-label="تعديل" href="{{ route('admin.items.edit', $item) }}" class="text-blue-600 hover:text-blue-700">
                                 <i class="fa-solid fa-pen" aria-hidden="true"></i>
                             </a>
+                            @endcanAbility
+                            @canAbility('items.view')
                             <a aria-label="عرض الإعلان في الموقع" href="{{ route('items.show', $item) }}" target="_blank" class="text-gray-600 hover:text-gray-700">
                                 <i class="fa-solid fa-eye" aria-hidden="true"></i>
                             </a>
+                            @endcanAbility
+                            @canAbility('items.delete')
                             <form method="POST" action="{{ route('admin.items.destroy', $item) }}" onsubmit="return confirm('حذف الإعلان؟')" class="inline">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:text-red-700" aria-label="حذف">
                                     <i class="fa-solid fa-trash" aria-hidden="true"></i>
                                 </button>
                             </form>
+                            @endcanAbility
                         </div>
                     </td>
                 </tr>

@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Report;
 use App\Notifications\ReportStatusChanged;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Gate;
 class ReportController extends Controller
 {
     public function index(Request $request)
     {
+        Gate::authorize('reports.view');
         $query = Report::with(['user', 'reportable'])->latest();
 
         if ($status = $request->input('status')) {
@@ -23,17 +24,20 @@ class ReportController extends Controller
 
         $reports = $query->paginate(20)->withQueryString();
 
-        return view('admin.reports.reports', compact('reports'));
+        return view('admin.reports.index', compact('reports'));
     }
+
 
     public function show(Report $report)
     {
+        Gate::authorize('reports.view');
         $report->load(['user', 'reportable', 'reviewer']);
         return view('admin.reports.show', compact('report'));
     }
 
     public function update(Request $request, Report $report)
     {
+        Gate::authorize('reports.update');
         $data = $request->validate([
             'status' => ['required', 'in:pending,reviewed,accepted,rejected'],
             'admin_note' => ['nullable', 'string', 'max:1000'],

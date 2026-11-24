@@ -20,20 +20,21 @@
         </a>
         <div class="admin-nav-caption">إدارة المنصة</div>
         <nav class="admin-nav" aria-label="أقسام الإدارة">
-            @foreach([
+            {{-- @foreach([
                 ['admin.dashboard', 'admin.dashboard', 'fa-chart-pie', 'نظرة عامة', 'متابعة أداء المنصة'],
                 ['admin.site-reports.index', 'admin.site-reports.*', 'fa-chart-column', 'تقارير الموقع', 'الإحصاءات وتصدير Excel'],
                 ['admin.users.index', 'admin.users.*', 'fa-users', 'المستخدمون', 'الحسابات والصلاحيات'],
                 ['admin.items.index', 'admin.items.*', 'fa-box-open', 'الإعلانات', 'المفقودات والموجودات'],
                 ['admin.categories.index', 'admin.categories.*', 'fa-layer-group', 'التصنيفات', 'تنظيم محتوى المنصة'],
                 ['admin.reports.index', 'admin.reports.*', 'fa-shield-halved', 'البلاغات', 'المراجعة وحماية المجتمع'],
-            ] as [$link, $pattern, $icon, $label, $description])
-                <a href="{{ route($link) }}" class="admin-nav-link {{ request()->routeIs($pattern) ? 'is-active' : '' }}" @if(request()->routeIs($pattern)) aria-current="page" @endif>
+            ] as [$route, $pattern, $icon, $label, $description])
+                <a href="{{ route($route) }}" class="admin-nav-link {{ request()->routeIs($pattern) ? 'is-active' : '' }}" @if(request()->routeIs($pattern)) aria-current="page" @endif>
                     <i class="fa-solid {{ $icon }}" aria-hidden="true"></i>
                     <span><strong>{{ $label }}</strong><small>{{ $description }}</small></span>
                     @if(request()->routeIs($pattern))<span class="admin-nav-dot" aria-hidden="true"></span>@endif
                 </a>
-            @endforeach
+            @endforeach --}}
+            <x-nav/>
         </nav>
         <div class="admin-sidebar-bottom">
             <div class="admin-purpose"><i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i><strong>كل عودة، بداية حكاية.</strong><p>مساحة أكثر أماناً تجمع المفقودات بأصحابها.</p></div>

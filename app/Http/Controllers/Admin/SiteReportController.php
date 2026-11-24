@@ -9,11 +9,12 @@ use App\Support\XlsxExport;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-
+use Illuminate\Support\Facades\Gate;
 class SiteReportController extends Controller
 {
     public function index(SiteReportRequest $request): View
     {
+        Gate::authorize('sitereports.view');
         $report = $this->report($request);
 
         return view('admin.site-reports', [
@@ -27,6 +28,7 @@ class SiteReportController extends Controller
 
     public function export(SiteReportRequest $request, XlsxExport $export): BinaryFileResponse
     {
+        Gate::authorize('sitereports.export');
         $report = $this->report($request);
         $file = $export->create($report->sheets($report->summary(), $report->categories()));
         $filename = 'luqya-report-'.$report->from->toDateString().'-'.$report->to->toDateString().'.xlsx';

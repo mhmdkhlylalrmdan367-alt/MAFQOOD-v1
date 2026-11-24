@@ -5,13 +5,17 @@
 @section('description', 'أدر تصنيفات الإعلانات وترتيبها لتسهيل العثور على المفقودات.')
 
 @section('content')
+<x-flash-message/>
 <div class="admin-resource-intro"><i class="fa-solid fa-layer-group" aria-hidden="true"></i><div><strong>تنظيم يجعل الوصول أسهل</strong><p>أدر تصنيفات الإعلانات وترتيبها لتسهيل العثور على المفقودات.</p></div></div>
 
 <div class="flex justify-end mb-4">
-    <a href="{{ route('admin.categories.create') }}" class="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-lg font-semibold transition">
-        <i class="fa-solid fa-plus ml-1" aria-hidden="true"></i> تصنيف جديد
-    </a>
+    @canAbility('categories.create')
+        <a href="{{ route('admin.categories.create') }}" class="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-lg font-semibold transition">
+            <i class="fa-solid fa-plus ml-1" aria-hidden="true"></i> تصنيف جديد
+        </a>
+    @endcanAbility
 </div>
+
 
 <div class="admin-table-scroll bg-white rounded-xl shadow-sm overflow-hidden" role="region" aria-label="جدول التصنيفات" tabindex="0">
     <table class="w-full text-sm">
@@ -49,15 +53,19 @@
                     </td>
                     <td class="py-3 px-4">
                         <div class="flex items-center gap-2">
-                            <a aria-label="تعديل" href="{{ route('admin.categories.edit', $cat) }}" class="text-blue-600 hover:text-blue-700">
-                                <i class="fa-solid fa-pen" aria-hidden="true"></i>
-                            </a>
-                            <form method="POST" action="{{ route('admin.categories.destroy', $cat) }}" onsubmit="return confirm('حذف التصنيف؟')" class="inline">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-700" aria-label="حذف">
-                                    <i class="fa-solid fa-trash" aria-hidden="true"></i>
-                                </button>
-                            </form>
+                            @canAbility('categories.update')
+                                <a href="{{ route('admin.categories.edit', $cat) }}" class="text-blue-600 hover:text-blue-700" aria-label="تعديل">
+                                    <i class="fa-solid fa-pen" aria-hidden="true"></i>
+                                </a>
+                            @endcanAbility
+                            @canAbility('categories.delete')
+                                <form method="POST" action="{{ route('admin.categories.destroy', $cat) }}" onsubmit="return confirm('حذف التصنيف؟')" class="inline">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-700" aria-label="حذف">
+                                        <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                            @endcanAbility
                         </div>
                     </td>
                 </tr>
